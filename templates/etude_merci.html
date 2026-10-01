@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merci — EmpreintePro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
+</head>
+<body>
+  <div class="page">
+    <article class="sheet">
+      <header class="hero">
+        <div class="hero-top">
+          <div class="brand">
+            <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="">
+            <span>EmpreintePro</span>
+          </div>
+        </div>
+        <p class="kicker">Réponse enregistrée</p>
+        <h1>Merci.</h1>
+        <p class="lead">Votre avis est dans l’étude. Si vous avez laissé un contact et que le sujet vous parle, on pourra revenir vers vous.</p>
+        <div class="btn-row" style="margin-top:1.4rem;">
+          <a class="ghost" href="{{ url_for('etude_docs') }}">Relire la documentation</a>
+          <a class="btn" href="{{ url_for('etude_de_marche') }}">Nouvelle réponse</a>
+        </div>
+      </header>
+    </article>
+  </div>
+</body>
+</html>

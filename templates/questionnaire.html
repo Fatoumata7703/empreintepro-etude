@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmpreintePro — Étude de marché</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
+</head>
+<body>
+  <div class="page">
+    <article class="sheet">
+      <header class="hero">
+        <div class="hero-top">
+          <div class="brand">
+            <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="EmpreintePro">
+            <span>EmpreintePro</span>
+          </div>
+          <a class="ghost" href="{{ url_for('etude_docs') }}">Qu’est-ce que c’est ?</a>
+        </div>
+        <p class="kicker">Questionnaire terrain</p>
+        <h1>Comment gérez-vous l’accès à vos locaux ?</h1>
+        <p class="lead">Six minutes. Des faits, pas un discours. Vos réponses servent à vérifier si une serrure à empreinte, reliée à une plateforme locale, a un vrai usage ici.</p>
+        <div class="facts">
+          <div class="fact"><b>Anonyme si vous voulez</b><span>Le nom reste optionnel</span></div>
+          <div class="fact"><b>Une organisation</b><span>Un site, un responsable</span></div>
+          <div class="fact"><b>Pas de vente ici</b><span>On écoute d’abord</span></div>
+        </div>
+      </header>
+
+      <form id="surveyForm">
+        <p class="error-box" id="surveyError"></p>
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">01</span>
+            <h2>Vous et votre site</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">Quel est votre rôle ?</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="role" value="dirigeant"> Dirigeant / gérant</label>
+              <label class="opt"><input type="radio" name="role" value="admin"> Administration / RH</label>
+              <label class="opt"><input type="radio" name="role" value="securite"> Sécurité / maintenance</label>
+              <label class="opt"><input type="radio" name="role" value="autre"> Autre</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <span class="label">Votre organisation</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="type" value="pme"> PME / bureau</label>
+              <label class="opt"><input type="radio" name="type" value="ecole"> École / formation</label>
+              <label class="opt"><input type="radio" name="type" value="commerce"> Commerce / boutique</label>
+              <label class="opt"><input type="radio" name="type" value="entrepot"> Entrepôt / dépôt</label>
+              <label class="opt"><input type="radio" name="type" value="cabinet"> Cabinet / clinique</label>
+              <label class="opt"><input type="radio" name="type" value="cowork"> Coworking / immeuble</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="q">
+              <label class="label" for="taille">Nombre de personnes sur site</label>
+              <select id="taille" name="taille">
+                <option value="">Choisir</option>
+                <option>1 à 10</option>
+                <option>11 à 30</option>
+                <option>31 à 80</option>
+                <option>Plus de 80</option>
+              </select>
+            </div>
+            <div class="q">
+              <label class="label" for="zone">Zone</label>
+              <select id="zone" name="zone">
+                <option value="">Choisir</option>
+                <option>Dakar Plateau / Almadies</option>
+                <option>Autres communes de Dakar</option>
+                <option>Hors Dakar</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">02</span>
+            <h2>L’accès, aujourd’hui</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">Comment on entre chez vous ? <span class="hint">Plusieurs réponses possibles</span></span>
+            <div class="choices two">
+              <label class="opt"><input type="checkbox" name="moyen" value="cles"> Clés</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="badges"> Badges / cartes</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="codes"> Codes / digicode</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="vigile"> Vigile / registre</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="empreinte"> Empreinte déjà en place</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="rien"> Rien de formalisé</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="label" for="portes">Combien de portes ou zones à contrôler ?</label>
+            <select id="portes" name="portes">
+              <option value="">Choisir</option>
+              <option>1</option>
+              <option>2 à 4</option>
+              <option>5 à 10</option>
+              <option>Plus de 10</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">03</span>
+            <h2>Ce qui pose problème</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">Qu’est-ce qui vous gêne le plus ? <span class="hint">Cochez tout ce qui est vrai</span></span>
+            <div class="choices">
+              <label class="opt"><input type="checkbox" name="douleur" value="pertes"> Clés ou badges perdus, prêtés, copiés</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="codes"> Codes connus de trop de monde</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="trace"> On ne sait pas vraiment qui est entré</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="depart"> Un départ, et l’accès reste ouvert</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="temps"> Trop de temps pour donner ou retirer un droit</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="rien"> Pas de vrai problème pour le moment</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="label" for="incident">Un cas concret, si vous en avez un</label>
+            <textarea id="incident" name="incident" placeholder="Ex. badge prêté, porte restée ouverte, vol, oubli de registre…"></textarea>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">04</span>
+            <h2>Ce que vous attendez</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">Pour vous, l’essentiel serait… <span class="hint">Une seule priorité</span></span>
+            <div class="choices">
+              <label class="opt"><input type="radio" name="priorite" value="securite"> Sécuriser : plus de badge qui circule</label>
+              <label class="opt"><input type="radio" name="priorite" value="gerer"> Gérer : donner et retirer un droit tout de suite</label>
+              <label class="opt"><input type="radio" name="priorite" value="tracer"> Tracer : savoir qui est passé, et quand</label>
+              <label class="opt"><input type="radio" name="priorite" value="simple"> Rester simple : que ça marche, sans usine à gaz</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <span class="label">Qui doit pouvoir ouvrir ?</span>
+            <div class="choices two">
+              <label class="opt"><input type="checkbox" name="qui" value="salaries"> Salariés</label>
+              <label class="opt"><input type="checkbox" name="qui" value="temps"> Personnel temporaire</label>
+              <label class="opt"><input type="checkbox" name="qui" value="visiteurs"> Visiteurs / prestataires</label>
+              <label class="opt"><input type="checkbox" name="qui" value="direction"> Direction seulement, sur certaines zones</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">05</span>
+            <h2>EmpreintePro, en une phrase</h2>
+          </div>
+
+          <div class="pitch">
+            <small>À lire au répondant</small>
+            <p>Une serrure à empreinte sur la porte, reliée à une plateforme web. On autorise ou on refuse. Le responsable gère les personnes, les zones et l’historique. Installation et suivi à Dakar. Matériel + abonnement. Contrat pilote possible sur 3 mois.</p>
+          </div>
+
+          <div class="q">
+            <span class="label">Est-ce que ça vous parle ?</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="interet" value="oui"> Oui, clairement</label>
+              <label class="opt"><input type="radio" name="interet" value="peut"> Peut-être, selon le prix</label>
+              <label class="opt"><input type="radio" name="interet" value="plus"> Intéressant, plus tard</label>
+              <label class="opt"><input type="radio" name="interet" value="non"> Non, pas pour nous</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <span class="label">Qu’est-ce qui vous arrêterait ?</span>
+            <div class="choices">
+              <label class="opt"><input type="checkbox" name="frein" value="prix"> Le prix</label>
+              <label class="opt"><input type="checkbox" name="frein" value="confiance"> La confiance / les données biométriques</label>
+              <label class="opt"><input type="checkbox" name="frein" value="panne"> La peur de la panne (porte bloquée)</label>
+              <label class="opt"><input type="checkbox" name="frein" value="complexe"> Trop complexe à installer ou à utiliser</label>
+              <label class="opt"><input type="checkbox" name="frein" value="existant"> On a déjà un système</label>
+            </div>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <span class="num">06</span>
+            <h2>Décision et suite</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">Un contrat pilote Premium, 3 mois, matériel + plateforme + accompagnement</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="pilote" value="ouvert"> On peut en discuter</label>
+              <label class="opt"><input type="radio" name="pilote" value="voir"> D’abord voir fonctionner</label>
+              <label class="opt"><input type="radio" name="pilote" value="budget"> Seulement si le budget est clair</label>
+              <label class="opt"><input type="radio" name="pilote" value="non"> Pas maintenant</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="q">
+              <label class="label" for="nom">Nom <span class="hint">Optionnel</span></label>
+              <input type="text" id="nom" name="nom" placeholder="Prénom, organisation">
+            </div>
+            <div class="q">
+              <label class="label" for="tel">Contact <span class="hint">Optionnel</span></label>
+              <input type="tel" id="tel" name="tel" placeholder="Téléphone ou WhatsApp">
+            </div>
+          </div>
+
+          <div class="q">
+            <label class="label" for="fin">Un mot de plus, si vous voulez</label>
+            <textarea id="fin" name="fin" placeholder="Ce qu’il faudrait pour que ce soit utile chez vous."></textarea>
+          </div>
+        </section>
+
+        <div class="actions">
+          <p class="note">6 minutes · vos réponses aident l’étude de marché EmpreintePro</p>
+          <div class="btn-row">
+            <a class="ghost" href="{{ url_for('etude_docs') }}">Lire la doc</a>
+            <button class="btn" id="surveySubmit" type="submit">Envoyer</button>
+          </div>
+        </div>
+      </form>
+    </article>
+  </div>
+  <script src="{{ url_for('static', filename='js/survey.js') }}"></script>
+</body>
+</html>

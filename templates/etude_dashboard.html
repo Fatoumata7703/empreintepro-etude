@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard étude — EmpreintePro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
+</head>
+<body class="dash">
+  <header class="dash-bar">
+    <a class="brand" href="{{ url_for('etude_dashboard') }}">
+      <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="">
+      <span>Étude de marché</span>
+    </a>
+    <div class="btn-row">
+      <a class="ghost" href="{{ url_for('etude_de_marche') }}">Questionnaire</a>
+      <a class="ghost" href="{{ url_for('etude_logout') }}">Sortir</a>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <div class="kpis">
+      <div class="kpi">
+        <small>Réponses</small>
+        <strong id="kpiTotal">0</strong>
+        <span>questionnaires reçus</span>
+      </div>
+      <div class="kpi">
+        <small>Intéressés EmpreintePro</small>
+        <strong id="kpiYes">0 %</strong>
+        <span id="kpiYesHint">oui clairement</span>
+      </div>
+      <div class="kpi">
+        <small>Ouverts</small>
+        <strong id="kpiWarm">0 %</strong>
+        <span id="kpiWarmHint">oui + selon le prix</span>
+      </div>
+      <div class="kpi">
+        <small>Pilote 3 mois</small>
+        <strong id="kpiPilot">0</strong>
+        <span id="kpiPilotHint">prêts à discuter</span>
+      </div>
+    </div>
+    <p class="note" style="margin:-0.4rem 0 1rem;">Contacts laissés : <strong id="kpiContact">0</strong></p>
+
+    <div class="charts">
+      <div class="card">
+        <h3>Intérêt pour EmpreintePro</h3>
+        <div class="chart-box"><canvas id="chartInteret"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Types d’organisations</h3>
+        <div class="chart-box"><canvas id="chartOrgs"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Accès aujourd’hui</h3>
+        <div class="chart-box"><canvas id="chartMoyens"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Ce qui pose problème</h3>
+        <div class="chart-box"><canvas id="chartDouleurs"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Freins</h3>
+        <div class="chart-box"><canvas id="chartFreins"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Contrat pilote 3 mois</h3>
+        <div class="chart-box"><canvas id="chartPilote"></canvas></div>
+      </div>
+
+      <div class="card wide">
+        <h3>Intéressés / ouverts à un pilote</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Organisation</th>
+              <th>Zone</th>
+              <th>Intérêt</th>
+              <th>Pilote</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody id="leadRows"></tbody>
+        </table>
+      </div>
+
+      <div class="card wide">
+        <h3>Toutes les réponses</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Contact</th>
+              <th>Organisation</th>
+              <th>Zone</th>
+              <th>Intérêt</th>
+              <th>Pilote</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody id="allRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

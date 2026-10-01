@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmpreintePro — De quoi s’agit-il</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
+</head>
+<body>
+  <div class="page">
+    <article class="sheet">
+      <header class="hero">
+        <div class="hero-top">
+          <a class="brand" href="{{ url_for('etude_de_marche') }}">
+            <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="">
+            <span>EmpreintePro</span>
+          </a>
+          <a class="ghost" href="{{ url_for('etude_de_marche') }}">Remplir le questionnaire</a>
+        </div>
+        <div class="docs-hero-grid">
+          <div>
+            <p class="kicker">Documentation</p>
+            <h1>Ce qui se passe réellement</h1>
+            <p class="lead">Ce n’est pas une vente. C’est une étude de marché pour un projet de soutenance : une serrure à empreinte, reliée à une plateforme, pensée pour Dakar.</p>
+          </div>
+          <div class="lock-stage" aria-hidden="true">
+            <div class="lock-glow"></div>
+            <div class="lock-card">
+              <div class="fp-ring"></div>
+              <div class="fp-ring delay"></div>
+              <svg class="fp-svg" viewBox="0 0 120 140" fill="none">
+                <path class="fp-ridge r1" d="M60 28c-18 0-32 14-32 32v20c0 4 1 8 3 11" />
+                <path class="fp-ridge r2" d="M60 38c-12 0-22 10-22 22v16c0 6 2 11 6 15" />
+                <path class="fp-ridge r3" d="M60 48c-7 0-12 6-12 12v14c0 8 4 14 10 18" />
+                <path class="fp-ridge r4" d="M60 28c18 0 32 14 32 32v20c0 4-1 8-3 11" />
+                <path class="fp-ridge r5" d="M60 38c12 0 22 10 22 22v16c0 6-2 11-6 15" />
+                <path class="fp-ridge r6" d="M60 48c7 0 12 6 12 12v14c0 8-4 14-10 18" />
+                <path class="fp-ridge r7" d="M48 92c4 8 10 14 12 16c2-2 8-8 12-16" />
+                <path class="fp-ridge r8" d="M54 78c2 10 5 16 6 18c1-2 4-8 6-18" />
+              </svg>
+              <div class="fp-scan"></div>
+              <div class="lock-body">
+                <div class="lock-shackle"></div>
+                <div class="lock-core">
+                  <span class="lock-check"></span>
+                </div>
+              </div>
+              <p class="lock-caption"><span class="dot"></span> Accès autorisé</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="docs-body">
+        <h2>Le projet</h2>
+        <p>EmpreintePro associe un capteur d’empreinte sur la porte et une application web. Le dispositif autorise ou refuse. Le responsable gère les personnes, les zones et l’historique. L’offre prévue : matériel + abonnement + accompagnement local. Un contrat pilote de 3 mois est envisagé.</p>
+
+        <h2>Pourquoi ces questions</h2>
+        <p>On veut savoir comment les organisations contrôlent leurs accès aujourd’hui, ce qui les gêne, et si une solution empreinte + plateforme les intéresse vraiment — avant de parler prix ou déploiement.</p>
+        <ol>
+          <li>Qui vous êtes, quel type de site.</li>
+          <li>Comment on entre chez vous aujourd’hui.</li>
+          <li>Ce qui pose problème.</li>
+          <li>Ce que vous attendez.</li>
+          <li>Votre réaction à EmpreintePro.</li>
+          <li>Si un pilote 3 mois a un sens.</li>
+        </ol>
+
+        <h2>Vos réponses</h2>
+        <ul>
+          <li>Servent à l’étude de marché du projet.</li>
+          <li>Le nom et le téléphone restent optionnels.</li>
+          <li>Pas de revente de données. Pas de spam.</li>
+        </ul>
+
+        <h2>Ensuite</h2>
+        <p>Les réponses sont regroupées (types d’organisations, freins, intérêt). Si vous laissez un contact et que vous êtes intéressé, l’équipe peut revenir vers vous pour une démo ou un pilote.</p>
+
+        <div class="btn-row" style="margin-top:1.6rem;">
+          <a class="btn" href="{{ url_for('etude_de_marche') }}">Répondre au questionnaire</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</body>
+</html>

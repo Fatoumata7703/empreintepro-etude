@@ -1,0 +1,101 @@
+import os
+from functools import wraps
+from pathlib import Path
+
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+
+from etude_db import init_db, save_response, stats
+
+BASE = Path(__file__).resolve().parent
+ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
+
+app = Flask(
+    __name__,
+    template_folder=str(BASE / "templates"),
+    static_folder=str(BASE / "static"),
+    static_url_path="/static",
+)
+app.secret_key = os.environ.get("ETUDE_SECRET", "empreintepro-etude-locale")
+
+init_db()
+
+
+def admin_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("etude_admin"):
+            if request.path.startswith("/api/"):
+                return jsonify({"ok": False}), 401
+            return redirect(url_for("etude_login"))
+        return view(*args, **kwargs)
+
+    return wrapped
+
+
+@app.route("/")
+def etude_de_marche():
+    return render_template("questionnaire.html")
+
+
+@app.route("/docs")
+def etude_docs():
+    return render_template("etude_docs.html")
+
+
+@app.route("/merci")
+def etude_merci():
+    return render_template("etude_merci.html")
+
+
+@app.route("/api/reponses", methods=["POST"])
+def etude_save():
+    data = request.get_json(silent=True) or {}
+    org_type = (data.get("org_type") or "").strip()
+    interet = (data.get("interet") or "").strip()
+    if not org_type or not interet:
+        return jsonify({"ok": False, "error": "Organisation et intérêt sont requis."}), 400
+    save_response(data)
+    return jsonify({"ok": True, "redirect": url_for("etude_merci")})
+
+
+@app.route("/admin", methods=["GET", "POST"])
+def etude_login():
+    if request.method == "GET":
+        if session.get("etude_admin"):
+            return redirect(url_for("etude_dashboard"))
+        return render_template("etude_login.html", error=None)
+
+    password = (request.form.get("password") or "").strip()
+    if password == ADMIN_PASSWORD:
+        session["etude_admin"] = True
+        return redirect(url_for("etude_dashboard"))
+    return render_template("etude_login.html", error="Mot de passe incorrect.")
+
+
+@app.route("/admin/sortie")
+def etude_logout():
+    session.pop("etude_admin", None)
+    return redirect(url_for("etude_de_marche"))
+
+
+@app.route("/tableau")
+@admin_required
+def etude_dashboard():
+    return render_template("etude_dashboard.html")
+
+
+@app.route("/api/stats")
+@admin_required
+def etude_stats():
+    return jsonify(stats())
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", "5002"))
+    debug = os.environ.get("FLASK_DEBUG", "1") == "1"
+    print("\n  Étude de marché EmpreintePro")
+    print(f"  Questionnaire -> http://127.0.0.1:{port}/")
+    print(f"  Documentation -> http://127.0.0.1:{port}/docs")
+    print(f"  Dashboard     -> http://127.0.0.1:{port}/admin")
+    print(f"  Mot de passe  -> (variable ETUDE_ADMIN)\n")
+    app.run(debug=debug, host="0.0.0.0", port=port)
