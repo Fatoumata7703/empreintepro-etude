@@ -93,6 +93,10 @@ async function loadStats() {
   bars("chartMoyens", data.charts.moyens);
   bars("chartDouleurs", data.charts.douleurs);
   bars("chartFreins", data.charts.freins);
+  bars("chartConcurrents", data.charts.concurrents);
+  doughnut("chartBudget", data.charts.budget);
+  doughnut("chartUrgence", data.charts.urgence);
+  doughnut("chartDecideur", data.charts.decideur);
   doughnut("chartPilote", data.charts.pilote);
 
   fillTable("leadRows", data.leads);

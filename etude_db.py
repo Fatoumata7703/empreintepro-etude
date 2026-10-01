@@ -29,6 +29,14 @@ LABELS = {
         "empreinte": "Empreinte déjà en place",
         "rien": "Rien de formalisé",
     },
+    "concurrent": {
+        "zkteco": "ZKTeco",
+        "hikvision": "Hikvision",
+        "suprema": "Suprema",
+        "local": "Installateur / marque locale",
+        "autre": "Autre",
+        "aucun": "Aucune en particulier",
+    },
     "douleur": {
         "pertes": "Clés ou badges perdus",
         "codes": "Codes trop partagés",
@@ -49,6 +57,12 @@ LABELS = {
         "visiteurs": "Visiteurs / prestataires",
         "direction": "Direction seulement",
     },
+    "decideur": {
+        "moi": "Moi / direction sur place",
+        "siege": "Siège / propriétaire",
+        "conseil": "Plusieurs décideurs",
+        "nsp": "Pas encore clair",
+    },
     "interet": {
         "oui": "Oui, clairement",
         "peut": "Peut-être, selon le prix",
@@ -62,6 +76,19 @@ LABELS = {
         "complexe": "Trop complexe",
         "existant": "Système déjà en place",
     },
+    "budget": {
+        "lt100": "Moins de 100 000 FCFA",
+        "100_300": "100 000 à 300 000 FCFA",
+        "300_500": "300 000 à 500 000 FCFA",
+        "plus500": "Plus de 500 000 FCFA",
+        "nsp": "Je ne sais pas encore",
+    },
+    "urgence": {
+        "maintenant": "Maintenant / très bientôt",
+        "6mois": "Dans les 6 mois",
+        "plus_tard": "Plus tard",
+        "curiosite": "Juste de la curiosité",
+    },
     "pilote": {
         "ouvert": "Oui, essayer chez nous",
         "voir": "Oui, d’abord une démo",
@@ -70,12 +97,26 @@ LABELS = {
     },
 }
 
+EXTRA_COLUMNS = {
+    "concurrents": "TEXT",
+    "decideur": "TEXT",
+    "budget": "TEXT",
+    "urgence": "TEXT",
+}
+
 
 def connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def _ensure_columns(conn):
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(responses)").fetchall()}
+    for name, col_type in EXTRA_COLUMNS.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE responses ADD COLUMN {name} {col_type}")
 
 
 def init_db():
@@ -100,10 +141,15 @@ def init_db():
                 pilote TEXT,
                 nom TEXT,
                 tel TEXT,
-                fin TEXT
+                fin TEXT,
+                concurrents TEXT,
+                decideur TEXT,
+                budget TEXT,
+                urgence TEXT
             )
             """
         )
+        _ensure_columns(conn)
         conn.commit()
 
 
@@ -123,16 +169,25 @@ def _load(raw):
         return []
 
 
+def _row_get(row, key, default=""):
+    try:
+        value = row[key]
+    except (IndexError, KeyError):
+        return default
+    return default if value is None else value
+
+
 def save_response(payload):
     now = datetime.now(timezone.utc).isoformat()
     with connect() as conn:
+        _ensure_columns(conn)
         cur = conn.execute(
             """
             INSERT INTO responses (
                 created_at, role, org_type, taille, zone, moyens, portes,
                 douleurs, incident, priorite, qui, interet, freins, pilote,
-                nom, tel, fin
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                nom, tel, fin, concurrents, decideur, budget, urgence
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 now,
@@ -152,6 +207,10 @@ def save_response(payload):
                 (payload.get("nom") or "").strip()[:120],
                 (payload.get("tel") or "").strip()[:40],
                 (payload.get("fin") or "").strip()[:800],
+                _dump(payload.get("concurrents")),
+                payload.get("decideur") or "",
+                payload.get("budget") or "",
+                payload.get("urgence") or "",
             ),
         )
         conn.commit()
@@ -161,7 +220,7 @@ def save_response(payload):
 def _count_map(rows, field, keys):
     counts = {key: 0 for key in keys}
     for row in rows:
-        value = row[field]
+        value = _row_get(row, field)
         if value in counts:
             counts[value] += 1
     return counts
@@ -170,7 +229,7 @@ def _count_map(rows, field, keys):
 def _count_multi(rows, field, keys):
     counts = {key: 0 for key in keys}
     for row in rows:
-        for value in _load(row[field]):
+        for value in _load(_row_get(row, field)):
             if value in counts:
                 counts[value] += 1
     return counts
@@ -187,6 +246,7 @@ def _labeled(counts, group):
 
 def stats():
     with connect() as conn:
+        _ensure_columns(conn)
         rows = conn.execute("SELECT * FROM responses ORDER BY id DESC").fetchall()
 
     total = len(rows)
@@ -209,6 +269,9 @@ def stats():
             "interet_label": LABELS["interet"].get(row["interet"], row["interet"] or "—"),
             "pilote": LABELS["pilote"].get(row["pilote"], row["pilote"] or "—"),
             "priorite": LABELS["priorite"].get(row["priorite"], row["priorite"] or "—"),
+            "budget": LABELS["budget"].get(_row_get(row, "budget"), _row_get(row, "budget") or "—"),
+            "urgence": LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—"),
+            "decideur": LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—"),
             "nom": row["nom"] or "",
             "tel": row["tel"] or "",
             "incident": row["incident"] or "",
@@ -230,10 +293,14 @@ def stats():
         "charts": {
             "org_type": _labeled(_count_map(rows, "org_type", LABELS["org_type"]), "org_type"),
             "moyens": _labeled(_count_multi(rows, "moyens", LABELS["moyen"]), "moyen"),
+            "concurrents": _labeled(_count_multi(rows, "concurrents", LABELS["concurrent"]), "concurrent"),
             "douleurs": _labeled(_count_multi(rows, "douleurs", LABELS["douleur"]), "douleur"),
             "priorite": _labeled(_count_map(rows, "priorite", LABELS["priorite"]), "priorite"),
             "interet": _labeled(_count_map(rows, "interet", LABELS["interet"]), "interet"),
             "freins": _labeled(_count_multi(rows, "freins", LABELS["frein"]), "frein"),
+            "budget": _labeled(_count_map(rows, "budget", LABELS["budget"]), "budget"),
+            "urgence": _labeled(_count_map(rows, "urgence", LABELS["urgence"]), "urgence"),
+            "decideur": _labeled(_count_map(rows, "decideur", LABELS["decideur"]), "decideur"),
             "pilote": _labeled(_count_map(rows, "pilote", LABELS["pilote"]), "pilote"),
         },
         "leads": leads[:20],

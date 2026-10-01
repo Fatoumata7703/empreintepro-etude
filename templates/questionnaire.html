@@ -118,6 +118,18 @@
               <option>Plus de 10</option>
             </select>
           </div>
+
+          <div class="q">
+            <span class="label">Quelles solutions d’accès connaissez-vous ? <span class="hint">Plusieurs réponses possibles</span></span>
+            <div class="choices two">
+              <label class="opt"><input type="checkbox" name="concurrent" value="zkteco"> ZKTeco</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="hikvision"> Hikvision</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="suprema"> Suprema</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="local"> Installateur / marque locale</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="autre"> Autre (badge, digicode…)</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="aucun"> Aucune en particulier</label>
+            </div>
+          </div>
         </section>
 
         <section class="block">
@@ -169,6 +181,16 @@
               <label class="opt"><input type="checkbox" name="qui" value="direction"> Direction seulement, sur certaines zones</label>
             </div>
           </div>
+
+          <div class="q">
+            <span class="label">Qui déciderait d’équiper le site ?</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="decideur" value="moi"> Moi / la direction sur place</label>
+              <label class="opt"><input type="radio" name="decideur" value="siege"> Un siège / propriétaire</label>
+              <label class="opt"><input type="radio" name="decideur" value="conseil"> Il faudrait en parler à plusieurs</label>
+              <label class="opt"><input type="radio" name="decideur" value="nsp"> Je ne sais pas encore</label>
+            </div>
+          </div>
         </section>
 
         <section class="block">
@@ -202,12 +224,33 @@
               <label class="opt"><input type="checkbox" name="frein" value="existant"> On a déjà un système</label>
             </div>
           </div>
+
+          <div class="q">
+            <span class="label">Pour une porte équipée (matériel + pose + suivi), quel ordre de budget vous paraît réaliste ? <span class="hint">Sans engagement</span></span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="budget" value="lt100"> Moins de 100 000 FCFA</label>
+              <label class="opt"><input type="radio" name="budget" value="100_300"> 100 000 à 300 000 FCFA</label>
+              <label class="opt"><input type="radio" name="budget" value="300_500"> 300 000 à 500 000 FCFA</label>
+              <label class="opt"><input type="radio" name="budget" value="plus500"> Plus de 500 000 FCFA</label>
+              <label class="opt"><input type="radio" name="budget" value="nsp"> Je ne sais pas encore</label>
+            </div>
+          </div>
         </section>
 
         <section class="block">
           <div class="sec-head">
             <span class="num">06</span>
             <h2>Et ensuite ?</h2>
+          </div>
+
+          <div class="q">
+            <span class="label">C’est un sujet pour quand, chez vous ?</span>
+            <div class="choices two">
+              <label class="opt"><input type="radio" name="urgence" value="maintenant"> Maintenant / très bientôt</label>
+              <label class="opt"><input type="radio" name="urgence" value="6mois"> Dans les 6 mois</label>
+              <label class="opt"><input type="radio" name="urgence" value="plus_tard"> Plus tard</label>
+              <label class="opt"><input type="radio" name="urgence" value="curiosite"> Juste de la curiosité</label>
+            </div>
           </div>
 
           <div class="q">
