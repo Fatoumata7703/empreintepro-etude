@@ -947,6 +947,16 @@ textarea { min-height: 88px; resize: vertical; }
   border-bottom: 1px solid var(--line);
 }
 .dash-main { max-width: 1180px; margin: 0 auto; padding: 1.4rem 1.2rem 3rem; }
+.dash-intro {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin: 0 0 1rem;
+}
 .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.1rem; }
 .kpi {
   background: #fff;
@@ -964,8 +974,20 @@ textarea { min-height: 88px; resize: vertical; }
   border-radius: 16px;
   padding: 1rem 1.1rem 1.2rem;
 }
-.card h3 { font-size: 0.95rem; margin-bottom: 0.7rem; }
-.chart-box { position: relative; height: 260px; }
+.card h3 { font-size: 0.98rem; margin: 0 0 0.2rem; color: #0f172a; }
+.chart-sub {
+  margin: 0 0 0.55rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.chart-hint {
+  margin: 0.55rem 0 0;
+  color: #1e40af;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.chart-box { position: relative; height: 270px; }
 .wide { grid-column: 1 / -1; }
 table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 th { text-align: left; color: var(--muted); font-weight: 600; padding: 0.45rem 0.35rem; border-bottom: 1px solid var(--line); }
