@@ -17,7 +17,7 @@ LABELS = {
         "pme": "PME / bureau",
         "ecole": "École / formation",
         "commerce": "Commerce / boutique",
-        "entrepot": "Entrepôt / dépôt",
+        "entrepot": "Entrepôt / dépôt / particulier",
         "cabinet": "Cabinet / clinique",
         "cowork": "Coworking / immeuble",
     },
