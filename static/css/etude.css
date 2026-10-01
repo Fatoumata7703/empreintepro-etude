@@ -393,6 +393,104 @@ textarea { min-height: 88px; resize: vertical; }
 .docs-body ol, .docs-body ul { padding-left: 1.15rem; }
 .docs-body li { margin-bottom: 0.4rem; }
 
+.film {
+  margin: 1.35rem 0 0.35rem;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #dbe4f5;
+  background: #0b1220;
+  box-shadow: 0 22px 50px -28px rgba(15, 42, 122, 0.55);
+}
+
+.film-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0b1220;
+}
+
+.film-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.06);
+  transition: opacity 0.65s ease;
+}
+
+.film-shot.is-active {
+  opacity: 1;
+  animation: kenBurns 5.2s ease-out forwards;
+}
+
+.film-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 2.4rem 1.15rem 1rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 15, 40, 0.92) 70%);
+  color: #fff;
+}
+
+.film-caption small {
+  display: block;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.68rem;
+  color: #93c5fd;
+  margin-bottom: 0.25rem;
+}
+
+.film-caption h3 {
+  color: #fff;
+  font-size: 1.12rem;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.2rem;
+}
+
+.film-caption p {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.88rem;
+}
+
+.film-nav {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background: #fff;
+  border-top: 1px solid var(--line);
+}
+
+.film-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 0.75rem 0.2rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.film-tab.is-active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+  background: #eff6ff;
+}
+
+@keyframes kenBurns {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+
 .story {
   margin: 1rem 0 1.8rem;
   border: 1px solid #dbe4f5;
@@ -795,6 +893,8 @@ textarea { min-height: 88px; resize: vertical; }
 }
 
 @media (max-width: 900px) {
+  .film-nav { grid-template-columns: repeat(3, 1fr); }
+  .film-tab { font-size: 0.68rem; }
   .story-tabs { grid-template-columns: 1fr 1fr; }
   .story-panel,
   .story-panel.is-active { grid-template-columns: 1fr; }
@@ -802,6 +902,7 @@ textarea { min-height: 88px; resize: vertical; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .film-shot.is-active,
   .story-panel.is-active,
   .mini-scan,
   .door-status,

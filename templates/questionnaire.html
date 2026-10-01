@@ -19,11 +19,12 @@
             <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="EmpreintePro">
             <span>EmpreintePro</span>
           </div>
-          <a class="ghost" href="{{ url_for('etude_docs') }}#parcours">Voir comment ça marche</a>
+          <a class="ghost" href="{{ url_for('etude_docs') }}">Qu’est-ce que c’est ?</a>
         </div>
         <p class="kicker">Questionnaire terrain</p>
         <h1>Comment gérez-vous l’accès à vos locaux ?</h1>
-        <p class="lead">Six minutes. Des faits, pas un discours. Vos réponses servent à vérifier si une serrure à empreinte, reliée à une plateforme locale, a un vrai usage ici.</p>
+        <p class="lead">Six minutes. D’abord le film : du site jusqu’à l’espace client. Ensuite vos réponses.</p>
+        {% include "_film.html" %}
         <div class="facts">
           <div class="fact"><b>Anonyme si vous voulez</b><span>Le nom reste optionnel</span></div>
           <div class="fact"><b>Une organisation</b><span>Un site, un responsable</span></div>
@@ -290,6 +291,7 @@
       </form>
     </article>
   </div>
+  <script src="{{ url_for('static', filename='js/story.js') }}"></script>
   <script src="{{ url_for('static', filename='js/survey.js') }}"></script>
 </body>
 </html>

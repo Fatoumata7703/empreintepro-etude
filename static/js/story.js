@@ -2,13 +2,19 @@
   const board = document.getElementById("storyBoard");
   if (!board) return;
 
-  const tabs = [...board.querySelectorAll(".story-tab")];
+  const shots = [...board.querySelectorAll(".film-shot")];
+  const tabs = [...board.querySelectorAll(".film-tab, .story-tab")];
   const panels = [...board.querySelectorAll(".story-panel")];
   const progress = document.getElementById("storyProgress");
-  const total = panels.length;
+  const title = document.getElementById("filmTitle");
+  const text = document.getElementById("filmText");
+  const kicker = document.getElementById("filmKicker");
+  const total = shots.length || panels.length || tabs.length;
+  if (!total) return;
+
   let step = 0;
   let timer = null;
-  const DURATION = 4200;
+  const DURATION = 5200;
 
   function show(next) {
     step = ((next % total) + total) % total;
@@ -17,9 +23,12 @@
       tab.classList.toggle("is-active", on);
       tab.setAttribute("aria-selected", on ? "true" : "false");
     });
-    panels.forEach((panel, i) => {
-      panel.classList.toggle("is-active", i === step);
-    });
+    shots.forEach((shot, i) => shot.classList.toggle("is-active", i === step));
+    panels.forEach((panel, i) => panel.classList.toggle("is-active", i === step));
+    const active = tabs[step];
+    if (active && title) title.textContent = active.dataset.title || title.textContent;
+    if (active && text) text.textContent = active.dataset.text || text.textContent;
+    if (active && kicker) kicker.textContent = active.dataset.kicker || kicker.textContent;
     if (progress) {
       progress.style.transition = "none";
       progress.style.width = "0%";

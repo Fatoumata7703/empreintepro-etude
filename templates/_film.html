@@ -1,0 +1,24 @@
+<div class="film" id="storyBoard" aria-label="Parcours EmpreintePro">
+  <div class="film-frame">
+    <img class="film-shot is-active" src="{{ url_for('static', filename='img/story/story-01.jpg') }}" alt="Une responsable tape EmpreintePro et ouvre le site.">
+    <img class="film-shot" src="{{ url_for('static', filename='img/story/story-02.jpg') }}" alt="Elle s’inscrit sur la plateforme EmpreintePro.">
+    <img class="film-shot" src="{{ url_for('static', filename='img/story/story-03.jpg') }}" alt="Elle choisit une formule d’essai sur EmpreintePro.">
+    <img class="film-shot" src="{{ url_for('static', filename='img/story/story-04.jpg') }}" alt="Les installateurs posent le lecteur d’empreinte sur site.">
+    <img class="film-shot" src="{{ url_for('static', filename='img/story/story-05.jpg') }}" alt="Un collaborateur enrôle son empreinte sur la porte.">
+    <img class="film-shot" src="{{ url_for('static', filename='img/story/story-06.jpg') }}" alt="Sur l’espace client, elle voit les entrées et les sorties.">
+    <div class="film-caption">
+      <small id="filmKicker">01 · Le site</small>
+      <h3 id="filmTitle">Elle tape EmpreintePro</h3>
+      <p id="filmText">Sur le vrai site : landing, connexion, demander un devis.</p>
+    </div>
+  </div>
+  <div class="film-nav" role="tablist">
+    <button type="button" class="film-tab is-active" data-step="0" data-kicker="01 · Le site" data-title="Elle tape EmpreintePro" data-text="Sur le vrai site : landing, connexion, demander un devis.">Site</button>
+    <button type="button" class="film-tab" data-step="1" data-kicker="02 · Inscription" data-title="Elle crée son compte" data-text="Formulaire entreprise. Le compte attend d’être activé.">Inscription</button>
+    <button type="button" class="film-tab" data-step="2" data-kicker="03 · Formule" data-title="Elle choisit une formule" data-text="On commence par un essai. Pas de contrat pour faire peur.">Formule</button>
+    <button type="button" class="film-tab" data-step="3" data-kicker="04 · Pose" data-title="Les installateurs viennent" data-text="Chez elle : bureau, commerce ou entrepôt. Le lecteur est posé.">Pose</button>
+    <button type="button" class="film-tab" data-step="4" data-kicker="05 · Enrôlement" data-title="On enrôle une personne" data-text="Le doigt sur le capteur. L’accès est lié à la plateforme.">Enrôlement</button>
+    <button type="button" class="film-tab" data-step="5" data-kicker="06 · Espace client" data-title="Elle gère ses accès" data-text="Entrées, sorties, personnes, et l’IA pour lire l’historique.">Suivi</button>
+  </div>
+  <div class="story-progress" aria-hidden="true"><i id="storyProgress"></i></div>
+</div>
