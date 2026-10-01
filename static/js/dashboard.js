@@ -1,14 +1,16 @@
 const palette = [
-  "#2563eb", // bleu vif
-  "#0d9488", // teal
-  "#d97706", // ambre
-  "#7c3aed", // violet
-  "#db2777", // rose
-  "#059669", // vert
-  "#0891b2", // cyan
+  "#2563eb", // bleu
+  "#e11d48", // rouge
+  "#16a34a", // vert
+  "#ca8a04", // jaune
+  "#9333ea", // violet
   "#ea580c", // orange
+  "#0891b2", // cyan
+  "#be185d", // magenta
+  "#4d7c0f", // olive
+  "#0f766e", // teal
+  "#b45309", // brun
   "#4f46e5", // indigo
-  "#65a30d", // lime
 ];
 
 function chartOptions() {
