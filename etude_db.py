@@ -282,6 +282,11 @@ def init_db():
                 """
             )
         _ensure_columns(conn)
+        # Mounta restore: chart blue matches legend "6 à 10", not 11–30.
+        conn.execute(
+            "UPDATE responses SET taille = ? WHERE nom = ? AND taille = ?",
+            ("6 à 10", "Mounta", "11 à 30"),
+        )
         conn.commit()
 
 
