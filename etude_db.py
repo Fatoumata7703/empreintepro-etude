@@ -17,7 +17,8 @@ LABELS = {
         "pme": "PME / bureau",
         "ecole": "École / formation",
         "commerce": "Commerce / boutique",
-        "entrepot": "Entrepôt / dépôt / particulier",
+        "entrepot": "Entrepôt / dépôt",
+        "particulier": "Particulier / maison / entrepôt perso",
         "cabinet": "Cabinet / clinique",
         "cowork": "Coworking / immeuble",
     },
@@ -56,6 +57,8 @@ LABELS = {
         "temps": "Personnel temporaire",
         "visiteurs": "Visiteurs / prestataires",
         "direction": "Direction seulement",
+        "proprio": "Propriétaire / particulier",
+        "famille": "Famille / proches",
     },
     "decideur": {
         "moi": "Moi / direction sur place",

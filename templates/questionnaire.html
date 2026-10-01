@@ -27,7 +27,7 @@
         {% include "_film.html" %}
         <div class="facts">
           <div class="fact"><b>Anonyme si vous voulez</b><span>Le nom reste optionnel</span></div>
-          <div class="fact"><b>Une organisation</b><span>Un site, un responsable</span></div>
+          <div class="fact"><b>Un site</b><span>Entreprise ou particulier</span></div>
           <div class="fact"><b>Pas de vente ici</b><span>On écoute d’abord</span></div>
         </div>
       </header>
@@ -51,12 +51,13 @@
           </div>
 
           <div class="q">
-            <span class="label">Votre organisation</span>
+            <span class="label">Votre site</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="type" value="pme"> PME / bureau</label>
               <label class="opt"><input type="radio" name="type" value="ecole"> École / formation</label>
               <label class="opt"><input type="radio" name="type" value="commerce"> Commerce / boutique</label>
-              <label class="opt"><input type="radio" name="type" value="entrepot"> Entrepôt / dépôt / particulier</label>
+              <label class="opt"><input type="radio" name="type" value="entrepot"> Entrepôt / dépôt</label>
+              <label class="opt"><input type="radio" name="type" value="particulier"> Particulier / maison / entrepôt perso</label>
               <label class="opt"><input type="radio" name="type" value="cabinet"> Cabinet / clinique</label>
               <label class="opt"><input type="radio" name="type" value="cowork"> Coworking / immeuble</label>
             </div>
@@ -180,6 +181,8 @@
               <label class="opt"><input type="checkbox" name="qui" value="temps"> Personnel temporaire</label>
               <label class="opt"><input type="checkbox" name="qui" value="visiteurs"> Visiteurs / prestataires</label>
               <label class="opt"><input type="checkbox" name="qui" value="direction"> Direction seulement, sur certaines zones</label>
+              <label class="opt"><input type="checkbox" name="qui" value="proprio"> Propriétaire / particulier</label>
+              <label class="opt"><input type="checkbox" name="qui" value="famille"> Famille / proches</label>
             </div>
           </div>
 
@@ -267,7 +270,7 @@
           <div class="row">
             <div class="q">
               <label class="label" for="nom">Nom <span class="hint">Optionnel</span></label>
-              <input type="text" id="nom" name="nom" placeholder="Prénom, organisation">
+              <input type="text" id="nom" name="nom" placeholder="Prénom, entreprise ou particulier">
             </div>
             <div class="q">
               <label class="label" for="tel">Contact <span class="hint">Optionnel</span></label>
