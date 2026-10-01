@@ -1003,6 +1003,98 @@ td { padding: 0.65rem 0.35rem; border-bottom: 1px solid #f3f4f6; vertical-align:
 .badge.warm { background: #fef3c7; color: #92400e; }
 .badge.cold { background: #f3f4f6; color: #4b5563; }
 .empty { color: var(--muted); padding: 1rem 0; }
+.click-row { cursor: pointer; transition: background 0.15s ease; }
+.click-row:hover, .click-row:focus { background: #eff6ff; outline: none; }
+.preview-cell {
+  max-width: 280px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #475569;
+}
+body.modal-open { overflow: hidden; }
+.person-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+.person-modal[hidden] { display: none; }
+.person-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+.person-panel {
+  position: relative;
+  z-index: 1;
+  width: min(720px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #bfdbfe;
+  border-radius: 18px;
+  box-shadow: 0 28px 80px -28px rgba(30, 64, 175, 0.45);
+  padding: 1.15rem 1.2rem 1.35rem;
+}
+.person-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+.person-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+}
+.person-head h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1.35rem;
+  color: #0f172a;
+}
+.person-resume {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 0.85rem 0.95rem;
+  color: #1e3a8a;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+.person-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem 0.85rem;
+  margin: 0;
+}
+.person-field {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+}
+.person-field dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+.person-field dd {
+  margin: 0;
+  color: #0f172a;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
 
 @media (max-width: 900px) {
   .facts, .choices.two, .row, .kpis, .charts, .docs-hero-grid { grid-template-columns: 1fr; }
@@ -1010,6 +1102,7 @@ td { padding: 0.65rem 0.35rem; border-bottom: 1px solid #f3f4f6; vertical-align:
   .page { margin: 1rem auto 2rem; }
   .hero, .block, .docs-body, .actions { padding-left: 1.2rem; padding-right: 1.2rem; }
   .wide { grid-column: auto; }
+  .person-grid { grid-template-columns: 1fr; }
 }
 
 @media print {

@@ -163,6 +163,61 @@ function badge(key) {
   return '<span class="badge cold">—</span>';
 }
 
+function joinList(items) {
+  if (!items || !items.length) return "—";
+  return items.join(" · ");
+}
+
+function field(label, value) {
+  return `<div class="person-field"><dt>${label}</dt><dd>${value || "—"}</dd></div>`;
+}
+
+let peopleById = {};
+
+function openPerson(id) {
+  const row = peopleById[id];
+  if (!row) return;
+  const modal = document.getElementById("personModal");
+  const title = document.getElementById("personTitle");
+  const body = document.getElementById("personBody");
+  title.textContent = row.nom || row.tel || "Répondant anonyme";
+  body.innerHTML = `
+    <p class="person-resume">${row.resume || ""}</p>
+    <dl class="person-grid">
+      ${field("Contact", [row.nom, row.tel].filter(Boolean).join(" · ") || "Anonyme")}
+      ${field("Rôle", row.role)}
+      ${field("Organisation", row.org_type)}
+      ${field("Zone", row.zone)}
+      ${field("Taille du site", row.taille)}
+      ${field("Portes", row.portes)}
+      ${field("Accès aujourd’hui", joinList(row.moyens))}
+      ${field("Problèmes", joinList(row.douleurs))}
+      ${field("Priorité", row.priorite)}
+      ${field("Qui doit ouvrir", joinList(row.qui))}
+      ${field("Qui décide", row.decideur)}
+      ${field("Intérêt EmpreintePro", row.interet_label)}
+      ${field("Vu ailleurs", row.ailleurs)}
+      ${field("Freins", joinList(row.freins))}
+      ${field("Concurrents", joinList(row.concurrents))}
+      ${field("Budget", row.budget)}
+      ${field("Abonnement", row.abonnement)}
+      ${field("Urgence", row.urgence)}
+      ${field("Démo / essai", row.pilote)}
+      ${field("Cas concret", row.incident || "—")}
+      ${field("Mot libre", row.fin || "—")}
+    </dl>
+  `;
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+}
+
+function closePerson() {
+  const modal = document.getElementById("personModal");
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
 function fillTable(id, rows) {
   const body = document.getElementById(id);
   if (!rows.length) {
@@ -171,17 +226,30 @@ function fillTable(id, rows) {
   }
   body.innerHTML = rows
     .map((row) => {
+      peopleById[row.id] = row;
       const who = row.nom || row.tel ? `${row.nom || "—"}<div class="hint">${row.tel || ""}</div>` : "Anonyme";
-      return `<tr>
+      const preview = (row.fin || row.incident || "Cliquer pour le résumé complet");
+      return `<tr class="click-row" tabindex="0" data-id="${row.id}" title="Voir le résumé">
         <td>${who}</td>
         <td>${row.org_type}</td>
         <td>${row.zone}</td>
         <td>${badge(row.interet)}</td>
         <td>${row.pilote}</td>
-        <td>${row.fin || row.incident || "—"}</td>
+        <td class="preview-cell">${preview}</td>
       </tr>`;
     })
     .join("");
+
+  body.querySelectorAll(".click-row").forEach((tr) => {
+    const open = () => openPerson(Number(tr.dataset.id));
+    tr.addEventListener("click", open);
+    tr.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
 }
 
 async function loadStats() {
@@ -222,5 +290,11 @@ async function loadStats() {
   fillTable("leadRows", data.leads);
   fillTable("allRows", data.recent);
 }
+
+document.getElementById("personClose")?.addEventListener("click", closePerson);
+document.getElementById("personBackdrop")?.addEventListener("click", closePerson);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closePerson();
+});
 
 loadStats();

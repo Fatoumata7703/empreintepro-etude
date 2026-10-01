@@ -341,6 +341,93 @@ def _row_get(row, key, default=""):
     return default if value is None else value
 
 
+def _multi_labels(row, field, group):
+    keys = _load(_row_get(row, field))
+    labels = LABELS.get(group, {})
+    return [labels.get(k, k) for k in keys if k]
+
+
+def _person_card(row):
+    moyens = _multi_labels(row, "moyens", "moyen")
+    douleurs = _multi_labels(row, "douleurs", "douleur")
+    freins = _multi_labels(row, "freins", "frein")
+    concurrents = _multi_labels(row, "concurrents", "concurrent")
+    qui = _multi_labels(row, "qui", "qui")
+    interet = _row_get(row, "interet") or ""
+    pilote = _row_get(row, "pilote") or ""
+    nom = _row_get(row, "nom") or ""
+    tel = _row_get(row, "tel") or ""
+    fin = (_row_get(row, "fin") or "").strip()
+    incident = (_row_get(row, "incident") or "").strip()
+
+    role = LABELS["role"].get(_row_get(row, "role"), _row_get(row, "role") or "—")
+    org = LABELS["org_type"].get(_row_get(row, "org_type"), _row_get(row, "org_type") or "—")
+    zone = _row_get(row, "zone") or "—"
+    taille = _row_get(row, "taille") or "—"
+    portes = LABELS["portes"].get(_row_get(row, "portes"), _row_get(row, "portes") or "—")
+    priorite = LABELS["priorite"].get(_row_get(row, "priorite"), _row_get(row, "priorite") or "—")
+    interet_label = LABELS["interet"].get(interet, interet or "—")
+    pilote_label = LABELS["pilote"].get(pilote, pilote or "—")
+    budget = LABELS["budget"].get(_row_get(row, "budget"), _row_get(row, "budget") or "—")
+    urgence = LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—")
+    decideur = LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—")
+    ailleurs = LABELS["ailleurs"].get(_row_get(row, "ailleurs"), _row_get(row, "ailleurs") or "—")
+    abonnement = LABELS["abonnement"].get(_row_get(row, "abonnement"), _row_get(row, "abonnement") or "—")
+
+    bits = [
+        f"{nom or 'Anonyme'} — {role} ({org}, {zone}).",
+        f"Site : {taille} personnes, {portes}.",
+    ]
+    if moyens:
+        bits.append("Accès actuel : " + ", ".join(moyens) + ".")
+    if douleurs:
+        bits.append("Problèmes : " + ", ".join(douleurs) + ".")
+    bits.append(f"Priorité : {priorite}.")
+    if qui:
+        bits.append("Doivent pouvoir ouvrir : " + ", ".join(qui) + ".")
+    bits.append(f"Intérêt EmpreintePro : {interet_label}. Suite : {pilote_label}.")
+    bits.append(f"Budget : {budget}. Urgence : {urgence}. Décideur : {decideur}.")
+    bits.append(f"Vu ailleurs : {ailleurs}. Abonnement : {abonnement}.")
+    if concurrents:
+        bits.append("Concurrents connus : " + ", ".join(concurrents) + ".")
+    if freins:
+        bits.append("Freins : " + ", ".join(freins) + ".")
+    if incident:
+        bits.append(f"Cas concret : {incident}")
+    if fin:
+        bits.append(f"Mot libre : {fin}")
+
+    return {
+        "id": _row_get(row, "id"),
+        "created_at": _row_get(row, "created_at"),
+        "nom": nom,
+        "tel": tel,
+        "role": role,
+        "org_type": org,
+        "taille": taille,
+        "zone": zone,
+        "portes": portes,
+        "moyens": moyens,
+        "douleurs": douleurs,
+        "priorite": priorite,
+        "qui": qui,
+        "interet": interet,
+        "interet_label": interet_label,
+        "pilote": pilote_label,
+        "freins": freins,
+        "concurrents": concurrents,
+        "budget": budget,
+        "urgence": urgence,
+        "decideur": decideur,
+        "ailleurs": ailleurs,
+        "abonnement": abonnement,
+        "incident": incident,
+        "fin": fin,
+        "resume": " ".join(bits),
+        "hot": interet == "oui" or pilote == "ouvert",
+    }
+
+
 def save_response(payload):
     now = datetime.now(timezone.utc).isoformat()
     values = (
@@ -444,26 +531,7 @@ def stats():
     leads = []
     recent = []
     for row in rows:
-        item = {
-            "id": _row_get(row, "id"),
-            "created_at": _row_get(row, "created_at"),
-            "role": LABELS["role"].get(_row_get(row, "role"), _row_get(row, "role") or "—"),
-            "org_type": LABELS["org_type"].get(_row_get(row, "org_type"), _row_get(row, "org_type") or "—"),
-            "taille": _row_get(row, "taille") or "—",
-            "zone": _row_get(row, "zone") or "—",
-            "interet": _row_get(row, "interet") or "",
-            "interet_label": LABELS["interet"].get(_row_get(row, "interet"), _row_get(row, "interet") or "—"),
-            "pilote": LABELS["pilote"].get(_row_get(row, "pilote"), _row_get(row, "pilote") or "—"),
-            "priorite": LABELS["priorite"].get(_row_get(row, "priorite"), _row_get(row, "priorite") or "—"),
-            "budget": LABELS["budget"].get(_row_get(row, "budget"), _row_get(row, "budget") or "—"),
-            "urgence": LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—"),
-            "decideur": LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—"),
-            "nom": _row_get(row, "nom") or "",
-            "tel": _row_get(row, "tel") or "",
-            "incident": _row_get(row, "incident") or "",
-            "fin": _row_get(row, "fin") or "",
-            "hot": _row_get(row, "interet") == "oui" or _row_get(row, "pilote") == "ouvert",
-        }
+        item = _person_card(row)
         recent.append(item)
         if item["hot"]:
             leads.append(item)

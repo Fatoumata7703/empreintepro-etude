@@ -148,7 +148,7 @@
 
       <div class="card wide">
         <h3>Leads chauds</h3>
-        <p class="chart-sub">« Oui clairement » ou prêts à essayer chez eux</p>
+        <p class="chart-sub">« Oui clairement » ou prêts à essayer chez eux — clique une ligne pour le résumé</p>
         <table>
           <thead>
             <tr>
@@ -166,7 +166,7 @@
 
       <div class="card wide">
         <h3>Toutes les réponses</h3>
-        <p class="chart-sub">Liste complète, y compris « selon le prix » et démo</p>
+        <p class="chart-sub">Clique une personne pour voir son avis complet</p>
         <table>
           <thead>
             <tr>
@@ -183,6 +183,20 @@
       </div>
     </div>
   </main>
+
+  <div id="personModal" class="person-modal" hidden>
+    <div id="personBackdrop" class="person-backdrop"></div>
+    <div class="person-panel" role="dialog" aria-modal="true" aria-labelledby="personTitle">
+      <div class="person-head">
+        <div>
+          <p class="person-kicker">Résumé répondant</p>
+          <h2 id="personTitle">—</h2>
+        </div>
+        <button type="button" id="personClose" class="ghost">Fermer</button>
+      </div>
+      <div id="personBody" class="person-body"></div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
