@@ -173,7 +173,28 @@ def init_db():
             """
         )
         _ensure_columns(conn)
+        conn.execute(
+            "DELETE FROM responses WHERE nom = ? AND (fin = ? OR incident = ?)",
+            ("Test Auto", "verification pipeline", "test connexion Auto"),
+        )
         conn.commit()
+
+
+def delete_response(response_id: int) -> bool:
+    with connect() as conn:
+        cur = conn.execute("DELETE FROM responses WHERE id = ?", (response_id,))
+        conn.commit()
+        return cur.rowcount > 0
+
+
+def purge_auto_tests() -> int:
+    with connect() as conn:
+        cur = conn.execute(
+            "DELETE FROM responses WHERE nom = ? AND (fin = ? OR incident = ?)",
+            ("Test Auto", "verification pipeline", "test connexion Auto"),
+        )
+        conn.commit()
+        return cur.rowcount
 
 
 def _dump(value):

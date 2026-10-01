@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, redirect, render_template, request, session, url_for
 
-from etude_db import export_rows, init_db, save_response, stats
+from etude_db import export_rows, init_db, purge_auto_tests, save_response, stats
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
@@ -113,6 +113,13 @@ def etude_export():
         mimetype="text/csv; charset=utf-8",
         headers={"Content-Disposition": "attachment; filename=etude-empreintepro.csv"},
     )
+
+
+@app.route("/api/purge-tests", methods=["POST"])
+@admin_required
+def etude_purge_tests():
+    removed = purge_auto_tests()
+    return jsonify({"ok": True, "removed": removed})
 
 
 if __name__ == "__main__":
