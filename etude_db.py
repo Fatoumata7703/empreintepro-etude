@@ -63,10 +63,10 @@ LABELS = {
         "existant": "Système déjà en place",
     },
     "pilote": {
-        "ouvert": "On peut en discuter",
-        "voir": "D’abord voir fonctionner",
-        "budget": "Si le budget est clair",
-        "non": "Pas maintenant",
+        "ouvert": "Oui, essayer chez nous",
+        "voir": "Oui, d’abord une démo",
+        "budget": "Peut-être, si c’est simple",
+        "non": "Pas pour le moment",
     },
 }
 

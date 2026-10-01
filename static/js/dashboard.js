@@ -85,7 +85,7 @@ async function loadStats() {
   document.getElementById("kpiPilot").textContent = data.pilot_open;
   document.getElementById("kpiYesHint").textContent = `${data.interest_yes} oui clairement`;
   document.getElementById("kpiWarmHint").textContent = `${data.interest_maybe} oui + selon le prix`;
-  document.getElementById("kpiPilotHint").textContent = "prêts à discuter 3 mois";
+  document.getElementById("kpiPilotHint").textContent = "prêts pour démo / essai";
   document.getElementById("kpiContact").textContent = data.with_contact;
 
   doughnut("chartInteret", data.charts.interet);
