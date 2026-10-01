@@ -42,7 +42,7 @@ form.addEventListener("submit", async (event) => {
   };
 
   if (!payload.org_type || !payload.interet) {
-    errorBox.textContent = "Indiquez au moins le type d’organisation et votre intérêt pour EmpreintePro.";
+    errorBox.textContent = "Indiquez au moins le type de site et votre intérêt pour EmpreintePro.";
     errorBox.classList.add("show");
     errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
