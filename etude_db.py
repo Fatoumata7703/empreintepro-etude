@@ -1,10 +1,12 @@
 import json
 import os
+import re
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ETUDE_DB", str(Path(__file__).resolve().parent / "instance" / "etude.db")))
+DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
 
 LABELS = {
     "role": {
@@ -141,17 +143,61 @@ LABELS = {
     },
 }
 
-EXTRA_COLUMNS = {
-    "concurrents": "TEXT",
-    "decideur": "TEXT",
-    "budget": "TEXT",
-    "urgence": "TEXT",
-    "ailleurs": "TEXT",
-    "abonnement": "TEXT",
-}
+COLUMNS = [
+    "created_at", "role", "org_type", "taille", "zone", "moyens", "portes",
+    "douleurs", "incident", "priorite", "qui", "interet", "freins", "pilote",
+    "nom", "tel", "fin", "concurrents", "decideur", "budget", "urgence",
+    "ailleurs", "abonnement",
+]
+
+
+def _use_postgres() -> bool:
+    return bool(DATABASE_URL)
+
+
+def _pg_url() -> str:
+    url = DATABASE_URL
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://") :]
+    return url
+
+
+class _PgConn:
+    def __init__(self, raw):
+        self.raw = raw
+
+    def execute(self, sql, params=None):
+        sql = sql.replace("?", "%s")
+        sql = re.sub(r"INSERT OR IGNORE", "INSERT", sql, flags=re.I)
+        cur = self.raw.cursor()
+        cur.execute(sql, params or ())
+        return cur
+
+    def commit(self):
+        self.raw.commit()
+
+    def close(self):
+        self.raw.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if exc_type:
+            self.raw.rollback()
+        else:
+            self.raw.commit()
+        self.raw.close()
 
 
 def connect():
+    if _use_postgres():
+        import psycopg2
+        import psycopg2.extras
+
+        raw = psycopg2.connect(_pg_url(), cursor_factory=psycopg2.extras.RealDictCursor)
+        return _PgConn(raw)
+
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -159,49 +205,83 @@ def connect():
 
 
 def _ensure_columns(conn):
+    names = ("concurrents", "decideur", "budget", "urgence", "ailleurs", "abonnement")
+    if _use_postgres():
+        for name in names:
+            conn.execute(f"ALTER TABLE responses ADD COLUMN IF NOT EXISTS {name} TEXT")
+        return
+
     existing = {row[1] for row in conn.execute("PRAGMA table_info(responses)").fetchall()}
-    for name, col_type in EXTRA_COLUMNS.items():
+    for name in names:
         if name not in existing:
-            conn.execute(f"ALTER TABLE responses ADD COLUMN {name} {col_type}")
+            conn.execute(f"ALTER TABLE responses ADD COLUMN {name} TEXT")
 
 
 def init_db():
     with connect() as conn:
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS responses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                created_at TEXT NOT NULL,
-                role TEXT,
-                org_type TEXT,
-                taille TEXT,
-                zone TEXT,
-                moyens TEXT,
-                portes TEXT,
-                douleurs TEXT,
-                incident TEXT,
-                priorite TEXT,
-                qui TEXT,
-                interet TEXT,
-                freins TEXT,
-                pilote TEXT,
-                nom TEXT,
-                tel TEXT,
-                fin TEXT,
-                concurrents TEXT,
-                decideur TEXT,
-                budget TEXT,
-                urgence TEXT,
-                ailleurs TEXT,
-                abonnement TEXT
+        if _use_postgres():
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS responses (
+                    id SERIAL PRIMARY KEY,
+                    created_at TEXT NOT NULL,
+                    role TEXT,
+                    org_type TEXT,
+                    taille TEXT,
+                    zone TEXT,
+                    moyens TEXT,
+                    portes TEXT,
+                    douleurs TEXT,
+                    incident TEXT,
+                    priorite TEXT,
+                    qui TEXT,
+                    interet TEXT,
+                    freins TEXT,
+                    pilote TEXT,
+                    nom TEXT,
+                    tel TEXT,
+                    fin TEXT,
+                    concurrents TEXT,
+                    decideur TEXT,
+                    budget TEXT,
+                    urgence TEXT,
+                    ailleurs TEXT,
+                    abonnement TEXT
+                )
+                """
             )
-            """
-        )
+        else:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS responses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    created_at TEXT NOT NULL,
+                    role TEXT,
+                    org_type TEXT,
+                    taille TEXT,
+                    zone TEXT,
+                    moyens TEXT,
+                    portes TEXT,
+                    douleurs TEXT,
+                    incident TEXT,
+                    priorite TEXT,
+                    qui TEXT,
+                    interet TEXT,
+                    freins TEXT,
+                    pilote TEXT,
+                    nom TEXT,
+                    tel TEXT,
+                    fin TEXT,
+                    concurrents TEXT,
+                    decideur TEXT,
+                    budget TEXT,
+                    urgence TEXT,
+                    ailleurs TEXT,
+                    abonnement TEXT
+                )
+                """
+            )
         _ensure_columns(conn)
-        conn.execute(
-            "DELETE FROM responses WHERE nom = ? AND (fin = ? OR incident = ?)",
-            ("Test Auto", "verification pipeline", "test connexion Auto"),
-        )
         conn.commit()
 
 
@@ -251,15 +331,57 @@ def _load(raw):
 def _row_get(row, key, default=""):
     try:
         value = row[key]
-    except (IndexError, KeyError):
+    except (IndexError, KeyError, TypeError):
         return default
     return default if value is None else value
 
 
 def save_response(payload):
     now = datetime.now(timezone.utc).isoformat()
+    values = (
+        now,
+        payload.get("role") or "",
+        payload.get("org_type") or "",
+        payload.get("taille") or "",
+        payload.get("zone") or "",
+        _dump(payload.get("moyens")),
+        payload.get("portes") or "",
+        _dump(payload.get("douleurs")),
+        (payload.get("incident") or "").strip(),
+        payload.get("priorite") or "",
+        _dump(payload.get("qui")),
+        payload.get("interet") or "",
+        _dump(payload.get("freins")),
+        payload.get("pilote") or "",
+        (payload.get("nom") or "").strip()[:120],
+        (payload.get("tel") or "").strip()[:40],
+        (payload.get("fin") or "").strip()[:800],
+        _dump(payload.get("concurrents")),
+        payload.get("decideur") or "",
+        payload.get("budget") or "",
+        payload.get("urgence") or "",
+        payload.get("ailleurs") or "",
+        payload.get("abonnement") or "",
+    )
     with connect() as conn:
         _ensure_columns(conn)
+        if _use_postgres():
+            cur = conn.execute(
+                """
+                INSERT INTO responses (
+                    created_at, role, org_type, taille, zone, moyens, portes,
+                    douleurs, incident, priorite, qui, interet, freins, pilote,
+                    nom, tel, fin, concurrents, decideur, budget, urgence,
+                    ailleurs, abonnement
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                RETURNING id
+                """,
+                values,
+            )
+            row = cur.fetchone()
+            conn.commit()
+            return int(row["id"] if isinstance(row, dict) else row[0])
+
         cur = conn.execute(
             """
             INSERT INTO responses (
@@ -269,31 +391,7 @@ def save_response(payload):
                 ailleurs, abonnement
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (
-                now,
-                payload.get("role") or "",
-                payload.get("org_type") or "",
-                payload.get("taille") or "",
-                payload.get("zone") or "",
-                _dump(payload.get("moyens")),
-                payload.get("portes") or "",
-                _dump(payload.get("douleurs")),
-                (payload.get("incident") or "").strip(),
-                payload.get("priorite") or "",
-                _dump(payload.get("qui")),
-                payload.get("interet") or "",
-                _dump(payload.get("freins")),
-                payload.get("pilote") or "",
-                (payload.get("nom") or "").strip()[:120],
-                (payload.get("tel") or "").strip()[:40],
-                (payload.get("fin") or "").strip()[:800],
-                _dump(payload.get("concurrents")),
-                payload.get("decideur") or "",
-                payload.get("budget") or "",
-                payload.get("urgence") or "",
-                payload.get("ailleurs") or "",
-                payload.get("abonnement") or "",
-            ),
+            values,
         )
         conn.commit()
         return cur.lastrowid
@@ -329,36 +427,37 @@ def _labeled(counts, group):
 def stats():
     with connect() as conn:
         _ensure_columns(conn)
-        rows = conn.execute("SELECT * FROM responses ORDER BY id DESC").fetchall()
+        cur = conn.execute("SELECT * FROM responses ORDER BY id DESC")
+        rows = cur.fetchall()
 
     total = len(rows)
-    interest_yes = sum(1 for r in rows if r["interet"] == "oui")
-    interest_maybe = sum(1 for r in rows if r["interet"] in ("oui", "peut"))
-    pilot_open = sum(1 for r in rows if r["pilote"] == "ouvert")
-    with_contact = sum(1 for r in rows if (r["nom"] or r["tel"]))
+    interest_yes = sum(1 for r in rows if _row_get(r, "interet") == "oui")
+    interest_maybe = sum(1 for r in rows if _row_get(r, "interet") in ("oui", "peut"))
+    pilot_open = sum(1 for r in rows if _row_get(r, "pilote") == "ouvert")
+    with_contact = sum(1 for r in rows if (_row_get(r, "nom") or _row_get(r, "tel")))
 
     leads = []
     recent = []
     for row in rows:
         item = {
-            "id": row["id"],
-            "created_at": row["created_at"],
-            "role": LABELS["role"].get(row["role"], row["role"] or "—"),
-            "org_type": LABELS["org_type"].get(row["org_type"], row["org_type"] or "—"),
-            "taille": row["taille"] or "—",
-            "zone": row["zone"] or "—",
-            "interet": row["interet"] or "",
-            "interet_label": LABELS["interet"].get(row["interet"], row["interet"] or "—"),
-            "pilote": LABELS["pilote"].get(row["pilote"], row["pilote"] or "—"),
-            "priorite": LABELS["priorite"].get(row["priorite"], row["priorite"] or "—"),
+            "id": _row_get(row, "id"),
+            "created_at": _row_get(row, "created_at"),
+            "role": LABELS["role"].get(_row_get(row, "role"), _row_get(row, "role") or "—"),
+            "org_type": LABELS["org_type"].get(_row_get(row, "org_type"), _row_get(row, "org_type") or "—"),
+            "taille": _row_get(row, "taille") or "—",
+            "zone": _row_get(row, "zone") or "—",
+            "interet": _row_get(row, "interet") or "",
+            "interet_label": LABELS["interet"].get(_row_get(row, "interet"), _row_get(row, "interet") or "—"),
+            "pilote": LABELS["pilote"].get(_row_get(row, "pilote"), _row_get(row, "pilote") or "—"),
+            "priorite": LABELS["priorite"].get(_row_get(row, "priorite"), _row_get(row, "priorite") or "—"),
             "budget": LABELS["budget"].get(_row_get(row, "budget"), _row_get(row, "budget") or "—"),
             "urgence": LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—"),
             "decideur": LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—"),
-            "nom": row["nom"] or "",
-            "tel": row["tel"] or "",
-            "incident": row["incident"] or "",
-            "fin": row["fin"] or "",
-            "hot": row["interet"] == "oui" or row["pilote"] == "ouvert",
+            "nom": _row_get(row, "nom") or "",
+            "tel": _row_get(row, "tel") or "",
+            "incident": _row_get(row, "incident") or "",
+            "fin": _row_get(row, "fin") or "",
+            "hot": _row_get(row, "interet") == "oui" or _row_get(row, "pilote") == "ouvert",
         }
         recent.append(item)
         if item["hot"]:
@@ -394,6 +493,7 @@ def stats():
         },
         "leads": leads[:20],
         "recent": recent[:50],
+        "storage": "postgres" if _use_postgres() else "sqlite",
     }
 
 
