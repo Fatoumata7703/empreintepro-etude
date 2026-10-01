@@ -1,11 +1,25 @@
-const palette = ["#2563eb", "#1e40af", "#60a5fa", "#1d4ed8", "#93c5fd", "#0f766e", "#f59e0b"];
+const palette = [
+  "#2563eb", // bleu vif
+  "#0d9488", // teal
+  "#d97706", // ambre
+  "#7c3aed", // violet
+  "#db2777", // rose
+  "#059669", // vert
+  "#0891b2", // cyan
+  "#ea580c", // orange
+  "#4f46e5", // indigo
+  "#65a30d", // lime
+];
 
 function chartOptions() {
   return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom", labels: { boxWidth: 12, font: { family: "Inter", size: 12 } } },
+      legend: {
+        position: "bottom",
+        labels: { boxWidth: 14, boxHeight: 14, padding: 10, font: { family: "Inter", size: 12 } },
+      },
     },
   };
 }
@@ -13,11 +27,12 @@ function chartOptions() {
 function doughnut(id, data) {
   const ctx = document.getElementById(id);
   if (!ctx) return;
+  const colors = data.labels.map((_, i) => palette[i % palette.length]);
   new Chart(ctx, {
     type: "doughnut",
     data: {
       labels: data.labels,
-      datasets: [{ data: data.values, backgroundColor: palette, borderWidth: 0 }],
+      datasets: [{ data: data.values, backgroundColor: colors, borderWidth: 2, borderColor: "#fff" }],
     },
     options: chartOptions(),
   });
@@ -26,11 +41,12 @@ function doughnut(id, data) {
 function bars(id, data) {
   const ctx = document.getElementById(id);
   if (!ctx) return;
+  const colors = data.labels.map((_, i) => palette[i % palette.length]);
   new Chart(ctx, {
     type: "bar",
     data: {
       labels: data.labels,
-      datasets: [{ data: data.values, backgroundColor: "#2563eb", borderRadius: 8, maxBarThickness: 28 }],
+      datasets: [{ data: data.values, backgroundColor: colors, borderRadius: 8, maxBarThickness: 28 }],
     },
     options: {
       ...chartOptions(),
