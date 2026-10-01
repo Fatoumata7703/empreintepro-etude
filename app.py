@@ -103,6 +103,7 @@ def etude_export():
         "id", "created_at", "role", "org_type", "taille", "zone", "moyens", "portes",
         "douleurs", "incident", "priorite", "qui", "interet", "freins", "pilote",
         "nom", "tel", "fin", "concurrents", "decideur", "budget", "urgence",
+        "ailleurs", "abonnement",
     ]
     writer.writerow(headers)
     for row in rows:

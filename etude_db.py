@@ -63,10 +63,24 @@ LABELS = {
         "maison": "Personnel de maison / gardien",
     },
     "decideur": {
-        "moi": "Moi (dirigeant ou propriétaire)",
-        "siege": "Siège / autre décideur",
+        "moi": "Moi, je décide",
+        "associe": "Avec un associé / la famille",
+        "siege": "Un responsable au-dessus",
         "conseil": "Plusieurs décideurs",
         "nsp": "Pas encore clair",
+    },
+    "ailleurs": {
+        "oui": "Oui, déjà vu",
+        "proche": "Quelque chose de proche",
+        "non": "Non, jamais",
+        "nsp": "Je ne sais pas",
+    },
+    "abonnement": {
+        "oui": "Oui, un abo me va",
+        "selon": "Selon le prix",
+        "achat": "Payer une fois, sans abo",
+        "non": "Pas d’abonnement",
+        "nsp": "Je ne sais pas encore",
     },
     "interet": {
         "oui": "Oui, clairement",
@@ -132,6 +146,8 @@ EXTRA_COLUMNS = {
     "decideur": "TEXT",
     "budget": "TEXT",
     "urgence": "TEXT",
+    "ailleurs": "TEXT",
+    "abonnement": "TEXT",
 }
 
 
@@ -175,7 +191,9 @@ def init_db():
                 concurrents TEXT,
                 decideur TEXT,
                 budget TEXT,
-                urgence TEXT
+                urgence TEXT,
+                ailleurs TEXT,
+                abonnement TEXT
             )
             """
         )
@@ -237,8 +255,9 @@ def save_response(payload):
             INSERT INTO responses (
                 created_at, role, org_type, taille, zone, moyens, portes,
                 douleurs, incident, priorite, qui, interet, freins, pilote,
-                nom, tel, fin, concurrents, decideur, budget, urgence
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                nom, tel, fin, concurrents, decideur, budget, urgence,
+                ailleurs, abonnement
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 now,
@@ -262,6 +281,8 @@ def save_response(payload):
                 payload.get("decideur") or "",
                 payload.get("budget") or "",
                 payload.get("urgence") or "",
+                payload.get("ailleurs") or "",
+                payload.get("abonnement") or "",
             ),
         )
         conn.commit()
@@ -352,6 +373,8 @@ def stats():
             "budget": _labeled(_count_map(rows, "budget", LABELS["budget"]), "budget"),
             "urgence": _labeled(_count_map(rows, "urgence", LABELS["urgence"]), "urgence"),
             "decideur": _labeled(_count_map(rows, "decideur", LABELS["decideur"]), "decideur"),
+            "ailleurs": _labeled(_count_map(rows, "ailleurs", LABELS["ailleurs"]), "ailleurs"),
+            "abonnement": _labeled(_count_map(rows, "abonnement", LABELS["abonnement"]), "abonnement"),
             "pilote": _labeled(_count_map(rows, "pilote", LABELS["pilote"]), "pilote"),
             "role": _labeled(_count_map(rows, "role", LABELS["role"]), "role"),
             "taille": _labeled(_count_map(rows, "taille", LABELS["taille"]), "taille"),

@@ -97,6 +97,8 @@ async function loadStats() {
   doughnut("chartBudget", data.charts.budget);
   doughnut("chartUrgence", data.charts.urgence);
   doughnut("chartDecideur", data.charts.decideur);
+  doughnut("chartAilleurs", data.charts.ailleurs);
+  doughnut("chartAbonnement", data.charts.abonnement);
   doughnut("chartPilote", data.charts.pilote);
   bars("chartZone", data.charts.zone);
   doughnut("chartTaille", data.charts.taille);
