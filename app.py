@@ -2,9 +2,9 @@ import os
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, Response, jsonify, redirect, render_template, request, session, url_for
 
-from etude_db import init_db, save_response, stats
+from etude_db import export_rows, init_db, save_response, stats
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
@@ -88,6 +88,31 @@ def etude_dashboard():
 @admin_required
 def etude_stats():
     return jsonify(stats())
+
+
+@app.route("/api/export")
+@admin_required
+def etude_export():
+    import csv
+    import io
+
+    rows = export_rows()
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    headers = [
+        "id", "created_at", "role", "org_type", "taille", "zone", "moyens", "portes",
+        "douleurs", "incident", "priorite", "qui", "interet", "freins", "pilote",
+        "nom", "tel", "fin", "concurrents", "decideur", "budget", "urgence",
+    ]
+    writer.writerow(headers)
+    for row in rows:
+        writer.writerow([row[key] if key in row.keys() else "" for key in headers])
+    data = "\ufeff" + buf.getvalue()
+    return Response(
+        data,
+        mimetype="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=etude-empreintepro.csv"},
+    )
 
 
 if __name__ == "__main__":

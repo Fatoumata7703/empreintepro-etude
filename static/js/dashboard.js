@@ -98,6 +98,12 @@ async function loadStats() {
   doughnut("chartUrgence", data.charts.urgence);
   doughnut("chartDecideur", data.charts.decideur);
   doughnut("chartPilote", data.charts.pilote);
+  bars("chartZone", data.charts.zone);
+  doughnut("chartTaille", data.charts.taille);
+  doughnut("chartRole", data.charts.role);
+  doughnut("chartPortes", data.charts.portes);
+  doughnut("chartPriorite", data.charts.priorite);
+  bars("chartQui", data.charts.qui);
 
   fillTable("leadRows", data.leads);
   fillTable("allRows", data.recent);

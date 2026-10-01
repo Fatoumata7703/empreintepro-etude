@@ -95,6 +95,29 @@ LABELS = {
         "budget": "Peut-être, si c’est simple",
         "non": "Pas pour le moment",
     },
+    "taille": {
+        "1 à 10": "1 à 10",
+        "11 à 30": "11 à 30",
+        "31 à 80": "31 à 80",
+        "Plus de 80": "Plus de 80",
+    },
+    "portes": {
+        "1": "1 porte",
+        "2 à 4": "2 à 4",
+        "5 à 10": "5 à 10",
+        "Plus de 10": "Plus de 10",
+    },
+    "zone": {
+        "Plateau": "Plateau",
+        "Médina / Gueule Tapée": "Médina / Gueule Tapée",
+        "Almadies / Ngor / Ouakam": "Almadies / Ngor / Ouakam",
+        "Mermoz / Sacré-Cœur / Fann": "Mermoz / Sacré-Cœur / Fann",
+        "Parcelles Assainies / Grand Yoff": "Parcelles / Grand Yoff",
+        "Pikine / Guédiawaye": "Pikine / Guédiawaye",
+        "Rufisque / Diamniadio": "Rufisque / Diamniadio",
+        "Autre commune de Dakar": "Autre commune de Dakar",
+        "Hors région de Dakar": "Hors région de Dakar",
+    },
 }
 
 EXTRA_COLUMNS = {
@@ -302,7 +325,18 @@ def stats():
             "urgence": _labeled(_count_map(rows, "urgence", LABELS["urgence"]), "urgence"),
             "decideur": _labeled(_count_map(rows, "decideur", LABELS["decideur"]), "decideur"),
             "pilote": _labeled(_count_map(rows, "pilote", LABELS["pilote"]), "pilote"),
+            "role": _labeled(_count_map(rows, "role", LABELS["role"]), "role"),
+            "taille": _labeled(_count_map(rows, "taille", LABELS["taille"]), "taille"),
+            "zone": _labeled(_count_map(rows, "zone", LABELS["zone"]), "zone"),
+            "portes": _labeled(_count_map(rows, "portes", LABELS["portes"]), "portes"),
+            "qui": _labeled(_count_multi(rows, "qui", LABELS["qui"]), "qui"),
         },
         "leads": leads[:20],
         "recent": recent[:50],
     }
+
+
+def export_rows():
+    with connect() as conn:
+        _ensure_columns(conn)
+        return conn.execute("SELECT * FROM responses ORDER BY id DESC").fetchall()
