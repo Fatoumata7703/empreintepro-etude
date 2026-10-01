@@ -215,8 +215,18 @@ def delete_response(response_id: int) -> bool:
 def purge_auto_tests() -> int:
     with connect() as conn:
         cur = conn.execute(
-            "DELETE FROM responses WHERE nom = ? AND (fin = ? OR incident = ?)",
-            ("Test Auto", "verification pipeline", "test connexion Auto"),
+            """
+            DELETE FROM responses
+            WHERE (nom = ? AND (fin = ? OR incident = ?))
+               OR (nom = ? AND fin = ?)
+            """,
+            (
+                "Test Auto",
+                "verification pipeline",
+                "test connexion Auto",
+                "Test Branchement",
+                "verification formulaire-admin",
+            ),
         )
         conn.commit()
         return cur.rowcount
