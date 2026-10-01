@@ -1,16 +1,45 @@
-/* Bleu de base + accents bien distincts (pas 6 bleus proches). */
+/* Bleus différenciés + turquoise / indigo / magenta (bleu-rouge). */
 const palette = [
-  "#1d4ed8", // bleu fort
-  "#0f766e", // teal
-  "#d97706", // ambre
+  "#1e3a8a", // navy
+  "#0891b2", // turquoise
   "#2563eb", // bleu vif
-  "#16a34a", // vert
-  "#7c3aed", // violet
-  "#0284c7", // bleu ciel
-  "#b45309", // brun orangé
-  "#64748b", // gris ardoise
-  "#db2777", // rose
+  "#7c3aed", // indigo-violet
+  "#db2777", // bleu-rouge / magenta
+  "#0f766e", // teal
+  "#0284c7", // ciel
+  "#4f46e5", // indigo
+  "#0369a1", // cyan profond
+  "#9333ea", // violet
+  "#1d4ed8", // royal
+  "#155e75", // pétrole
 ];
+
+/* Décalage de couleur par graphique → chaque carte n’a pas le même bleu dominant. */
+const chartColorOffset = {
+  chartInteret: 0,
+  chartOrgs: 3,
+  chartMoyens: 1,
+  chartDouleurs: 4,
+  chartFreins: 6,
+  chartConcurrents: 2,
+  chartBudget: 5,
+  chartUrgence: 7,
+  chartDecideur: 8,
+  chartAilleurs: 9,
+  chartAbonnement: 10,
+  chartPilote: 11,
+  chartZone: 1,
+  chartTaille: 3,
+  chartRole: 6,
+  chartPortes: 9,
+  chartPriorite: 4,
+  chartQui: 7,
+};
+
+function colorsFor(id, count) {
+  const offset = chartColorOffset[id] || 0;
+  return Array.from({ length: count }, (_, i) => palette[(i + offset) % palette.length]);
+}
 
 function chartOptions(extra = {}) {
   return {
@@ -22,9 +51,11 @@ function chartOptions(extra = {}) {
         labels: {
           boxWidth: 12,
           boxHeight: 12,
-          padding: 12,
+          padding: 10,
           font: { family: "Inter", size: 11 },
           color: "#334155",
+          // Toujours afficher toutes les catégories (même à 0).
+          filter: () => true,
         },
       },
       tooltip: {
@@ -43,19 +74,6 @@ function chartOptions(extra = {}) {
   };
 }
 
-function nonzero(data) {
-  const labels = [];
-  const values = [];
-  (data.labels || []).forEach((label, i) => {
-    const n = Number((data.values || [])[i] || 0);
-    if (n > 0) {
-      labels.push(label);
-      values.push(n);
-    }
-  });
-  return { labels, values };
-}
-
 function setHint(canvasId, text) {
   const box = document.getElementById(canvasId)?.closest(".card");
   if (!box) return;
@@ -71,20 +89,30 @@ function setHint(canvasId, text) {
 function doughnut(id, data, emptyText = "Aucune réponse pour ce graphique.") {
   const ctx = document.getElementById(id);
   if (!ctx) return;
-  const filtered = nonzero(data);
-  if (!filtered.values.length) {
+  const labels = data.labels || [];
+  const values = (data.values || []).map((v) => Number(v || 0));
+  if (!labels.length) {
     setHint(id, emptyText);
     return;
   }
-  const colors = filtered.labels.map((_, i) => palette[i % palette.length]);
-  const top = filtered.labels[filtered.values.indexOf(Math.max(...filtered.values))];
-  const n = filtered.values.reduce((a, b) => a + b, 0);
-  setHint(id, n === 1 ? `Réponse : ${top}` : `Dominant : ${top} (${Math.max(...filtered.values)}/${n})`);
+  const total = values.reduce((a, b) => a + b, 0);
+  if (!total) {
+    setHint(id, emptyText);
+  } else {
+    const topIdx = values.indexOf(Math.max(...values));
+    setHint(id, total === 1 ? `Réponse : ${labels[topIdx]}` : `Dominant : ${labels[topIdx]} (${values[topIdx]}/${total})`);
+  }
+  // Toutes les cases de légende restent visibles, y compris les 0.
   new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: filtered.labels,
-      datasets: [{ data: filtered.values, backgroundColor: colors, borderWidth: 2, borderColor: "#fff" }],
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colorsFor(id, labels.length),
+        borderWidth: 2,
+        borderColor: "#fff",
+      }],
     },
     options: chartOptions(),
   });
@@ -95,18 +123,27 @@ function bars(id, data, emptyText = "Aucune réponse pour ce graphique.") {
   if (!ctx) return;
   const labels = data.labels || [];
   const values = (data.values || []).map((v) => Number(v || 0));
-  if (!values.some((v) => v > 0)) {
+  if (!labels.length) {
     setHint(id, emptyText);
     return;
   }
-  const colors = labels.map((_, i) => palette[i % palette.length]);
-  const topIdx = values.indexOf(Math.max(...values));
-  setHint(id, `Plus cité : ${labels[topIdx]} (${values[topIdx]})`);
+  const total = values.reduce((a, b) => a + b, 0);
+  if (!total) {
+    setHint(id, emptyText);
+  } else {
+    const topIdx = values.indexOf(Math.max(...values));
+    setHint(id, `Plus cité : ${labels[topIdx]} (${values[topIdx]})`);
+  }
   new Chart(ctx, {
     type: "bar",
     data: {
       labels,
-      datasets: [{ data: values, backgroundColor: colors, borderRadius: 8, maxBarThickness: 28 }],
+      datasets: [{
+        data: values,
+        backgroundColor: colorsFor(id, labels.length),
+        borderRadius: 8,
+        maxBarThickness: 28,
+      }],
     },
     options: chartOptions({
       plugins: { legend: { display: false } },
