@@ -37,6 +37,11 @@ def etude_de_marche():
     return render_template("questionnaire.html")
 
 
+@app.route("/ping")
+def etude_ping():
+    return jsonify({"ok": True}), 200
+
+
 @app.route("/docs")
 def etude_docs():
     return render_template("etude_docs.html")
