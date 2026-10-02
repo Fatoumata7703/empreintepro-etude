@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graphiques étude de marché — EmpreintePro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
+</head>
+<body class="dash rapport">
+  <header class="dash-bar no-print">
+    <a class="brand" href="{{ url_for('etude_rapport') }}">
+      <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="">
+      <span>Graphiques étude</span>
+    </a>
+    <div class="btn-row">
+      <a class="ghost" href="{{ url_for('etude_dashboard') }}">Dashboard</a>
+      <button type="button" class="btn" id="btnPrint">Imprimer / PDF</button>
+      <a class="ghost" href="{{ url_for('etude_logout') }}">Sortir</a>
+    </div>
+  </header>
+
+  <main class="dash-main rapport-main">
+    <header class="rapport-cover">
+      <p class="rapport-kicker">EmpreintePro · Étude de marché</p>
+      <h1>Graphiques des réponses</h1>
+      <p class="rapport-lead">
+        Visualisations claires pour le rapport : chaque figure reprend une question du questionnaire
+        et les réponses collectées. Utilisez <strong>Imprimer / PDF</strong> ou une capture d’écran
+        pour les intégrer à l’étude.
+      </p>
+      <p class="rapport-meta" id="rapportMeta">Chargement…</p>
+    </header>
+
+    <section class="rapport-block">
+      <h2>1. Intérêt pour l’offre</h2>
+      <div class="charts rapport-grid">
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 1</span>
+            <strong>Ça vous parle ?</strong>
+            <em>Oui · Selon le prix · Non</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figInteret"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 2</span>
+            <strong>Quelle suite vous intéresse ?</strong>
+            <em>Essai · Démo · Peut-être · Pas maintenant</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figPilote"></canvas></div>
+        </figure>
+        <figure class="card fig wide">
+          <figcaption>
+            <span class="fig-num">Figure 3</span>
+            <strong>Funnel de conversion</strong>
+            <em>Réponses → Ouverts → Contacts → Essai chez eux</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figFunnel"></canvas></div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="rapport-block">
+      <h2>2. Profil des répondants</h2>
+      <div class="charts rapport-grid">
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 4</span>
+            <strong>Type de site</strong>
+            <em>PME, commerce, maison, entrepôt…</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figOrgs"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 5</span>
+            <strong>Rôle du répondant</strong>
+            <em>Dirigeant, propriétaire, admin…</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figRole"></canvas></div>
+        </figure>
+        <figure class="card fig wide">
+          <figcaption>
+            <span class="fig-num">Figure 6</span>
+            <strong>Zone géographique</strong>
+            <em>Répartition à Dakar et hors région</em>
+          </figcaption>
+          <div class="chart-box tall"><canvas id="figZone"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 7</span>
+            <strong>Nombre de portes</strong>
+            <em>Portes / zones à contrôler</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figPortes"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 8</span>
+            <strong>Qui décide d’acheter ?</strong>
+            <em>Décideur d’achat / pose</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figDecideur"></canvas></div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="rapport-block">
+      <h2>3. Accès actuel & besoins</h2>
+      <div class="charts rapport-grid">
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 9</span>
+            <strong>Moyen d’accès actuel</strong>
+            <em>Comment on entre aujourd’hui</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figMoyens"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 10</span>
+            <strong>Problème principal d’accès</strong>
+            <em>Douleurs citées par les répondants</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figDouleurs"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 11</span>
+            <strong>Solutions existantes connues</strong>
+            <em>Concurrents / marques déjà repérées</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figConcurrents"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 12</span>
+            <strong>Freins à EmpreintePro</strong>
+            <em>Ce qui pourrait bloquer l’adoption</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figFreins"></canvas></div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="rapport-block">
+      <h2>4. Prix & abonnement</h2>
+      <div class="charts rapport-grid">
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 13</span>
+            <strong>Tarifs d’installation jugés convenables</strong>
+            <em>Hors abonnement · plusieurs choix possibles</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figBudget"></canvas></div>
+        </figure>
+        <figure class="card fig">
+          <figcaption>
+            <span class="fig-num">Figure 14</span>
+            <strong>Préférence de paiement abonnement</strong>
+            <em>Par mois · semestre · an</em>
+          </figcaption>
+          <div class="chart-box"><canvas id="figAbonnement"></canvas></div>
+        </figure>
+      </div>
+    </section>
+
+    <section class="rapport-block">
+      <h2>5. Évolution dans le temps</h2>
+      <div class="charts rapport-grid">
+        <figure class="card fig wide">
+          <figcaption>
+            <span class="fig-num">Figure 15</span>
+            <strong>Volume de réponses</strong>
+            <em>Cumul et réponses par jour</em>
+          </figcaption>
+          <div class="chart-box tall"><canvas id="figTimeline"></canvas></div>
+        </figure>
+        <figure class="card fig wide">
+          <figcaption>
+            <span class="fig-num">Figure 16</span>
+            <strong>Intérêt au fil des jours</strong>
+            <em>Oui · Selon le prix · Non</em>
+          </figcaption>
+          <div class="chart-box tall"><canvas id="figInterestTrend"></canvas></div>
+        </figure>
+      </div>
+    </section>
+
+    <p class="rapport-foot">
+      Source : questionnaire EmpreintePro · données anonymisées possibles ·
+      captures destinées au rapport d’étude de marché.
+    </p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="{{ url_for('static', filename='js/rapport.js') }}"></script>
+</body>
+</html>

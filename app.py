@@ -89,6 +89,12 @@ def etude_dashboard():
     return render_template("etude_dashboard.html")
 
 
+@app.route("/rapport")
+@admin_required
+def etude_rapport():
+    return render_template("etude_rapport.html")
+
+
 @app.route("/api/stats")
 @admin_required
 def etude_stats():
@@ -135,5 +141,6 @@ if __name__ == "__main__":
     print(f"  Questionnaire -> http://127.0.0.1:{port}/")
     print(f"  Documentation -> http://127.0.0.1:{port}/docs")
     print(f"  Dashboard     -> http://127.0.0.1:{port}/admin")
+    print(f"  Graphiques    -> http://127.0.0.1:{port}/rapport")
     print(f"  Mot de passe  -> (variable ETUDE_ADMIN)\n")
     app.run(debug=debug, host="0.0.0.0", port=port)

@@ -1163,6 +1163,93 @@ body.modal-open { overflow: hidden; }
   body { background: #fff; }
   .page { margin: 0; max-width: none; padding: 0; }
   .sheet { border: 0; box-shadow: none; border-radius: 0; }
-  .ghost, .btn, .dash-bar, .lock-stage { display: none; }
+  .ghost, .btn, .dash-bar, .lock-stage, .no-print { display: none !important; }
   .docs-hero-grid { display: block; }
+  .rapport-main { max-width: none; padding: 0.5rem; }
+  .fig { break-inside: avoid; box-shadow: none; border: 1px solid #cbd5e1; }
+  .chart-box { height: 240px; }
+  .chart-box.tall { height: 280px; }
+  .rapport-block h2 { margin-top: 1rem; }
+}
+
+/* Rapport étude — figures propres pour capture / PDF */
+.rapport-cover {
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 55%, #ecfeff 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 18px;
+  padding: 1.35rem 1.4rem 1.25rem;
+  margin-bottom: 1.2rem;
+}
+.rapport-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+.rapport-cover h1 {
+  margin: 0.35rem 0 0.55rem;
+  font-size: 1.65rem;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+.rapport-lead {
+  margin: 0;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 62ch;
+}
+.rapport-meta {
+  margin: 0.85rem 0 0;
+  color: #1e40af;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.rapport-block h2 {
+  margin: 1.6rem 0 0.7rem;
+  font-size: 1.05rem;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.rapport-grid .fig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.fig figcaption {
+  margin: 0 0 0.7rem;
+}
+.fig-num {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  margin-bottom: 0.4rem;
+}
+.fig figcaption strong {
+  display: block;
+  font-size: 1rem;
+  color: #0f172a;
+  margin-top: 0.25rem;
+}
+.fig figcaption em {
+  display: block;
+  font-style: normal;
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-top: 0.15rem;
+}
+.rapport-foot {
+  margin: 1.8rem 0 0.5rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  line-height: 1.45;
 }
