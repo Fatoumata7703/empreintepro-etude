@@ -25,7 +25,7 @@ form.addEventListener("submit", async (event) => {
     zone: value("zone"),
     moyens: values("moyen"),
     portes: value("portes"),
-    concurrents: [],
+    concurrents: values("concurrent"),
     douleurs: values("douleur"),
     incident: "",
     priorite: "",
