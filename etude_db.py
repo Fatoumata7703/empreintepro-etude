@@ -78,10 +78,10 @@ LABELS = {
         "nsp": "Je ne sais pas",
     },
     "abonnement": {
-        "oui": "OK pour l’abo plateforme",
-        "selon": "OK, selon le montant mensuel",
-        "achat": "Préfère payer plusieurs mois d’avance",
-        "non": "Le mensuel me gêne (plateforme quand même nécessaire)",
+        "oui": "OK, abo au mois",
+        "selon": "OK, selon le montant",
+        "achat": "OK, préfère payer une année d’avance",
+        "non": "Le prix de l’abo me gêne (mais il reste obligatoire)",
         "nsp": "Je ne sais pas encore",
     },
     "interet": {
