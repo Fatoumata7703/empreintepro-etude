@@ -79,11 +79,9 @@ LABELS = {
         "nsp": "Je ne sais pas",
     },
     "abonnement": {
-        "oui": "OK, abonnement au mois",
-        "selon": "OK, selon le montant",
-        "achat": "OK, préfère payer une année d’avance",
-        "non": "Le prix de l’abonnement me gêne (mais il reste obligatoire)",
-        "nsp": "Je ne sais pas encore",
+        "mois": "Par mois",
+        "semestre": "Par semestre",
+        "an": "Par an",
     },
     "interet": {
         "oui": "Oui",
@@ -143,6 +141,17 @@ LABELS = {
         "Hors région de Dakar": "Hors région de Dakar",
     },
 }
+
+ABONNEMENT_ALIASES = {
+    "oui": "mois",
+    "achat": "an",
+}
+
+
+def _abonnement_key(value):
+    raw = value or ""
+    return ABONNEMENT_ALIASES.get(raw, raw)
+
 
 COLUMNS = [
     "created_at", "role", "org_type", "taille", "zone", "moyens", "portes",
@@ -373,7 +382,8 @@ def _person_card(row):
     urgence = LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—")
     decideur = LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—")
     ailleurs = LABELS["ailleurs"].get(_row_get(row, "ailleurs"), _row_get(row, "ailleurs") or "—")
-    abonnement = LABELS["abonnement"].get(_row_get(row, "abonnement"), _row_get(row, "abonnement") or "—")
+    abo_raw = _row_get(row, "abonnement") or ""
+    abonnement = LABELS["abonnement"].get(_abonnement_key(abo_raw), abo_raw or "—")
 
     bits = [
         f"{nom or 'Anonyme'} — {role} ({org}, {zone}).",
@@ -387,7 +397,7 @@ def _person_card(row):
     if qui:
         bits.append("Doivent pouvoir ouvrir : " + ", ".join(qui) + ".")
     bits.append(f"Intérêt EmpreintePro : {interet_label}. Suite : {pilote_label}.")
-    bits.append(f"Installation (budget) : {budget}. Abonnement plateforme (enrôlement / droits) : {abonnement}.")
+    bits.append(f"Tarifs installation : {budget}. Paiement abonnement : {abonnement}.")
     bits.append(f"Urgence : {urgence}. Décideur : {decideur}. Vu ailleurs : {ailleurs}.")
     if concurrents:
         bits.append("Concurrents connus : " + ", ".join(concurrents) + ".")
@@ -490,10 +500,12 @@ def save_response(payload):
         return cur.lastrowid
 
 
-def _count_map(rows, field, keys):
+def _count_map(rows, field, keys, normalize=None):
     counts = {key: 0 for key in keys}
     for row in rows:
         value = _row_get(row, field)
+        if normalize:
+            value = normalize(value)
         if value in counts:
             counts[value] += 1
     return counts
@@ -557,7 +569,10 @@ def stats():
             "urgence": _labeled(_count_map(rows, "urgence", LABELS["urgence"]), "urgence"),
             "decideur": _labeled(_count_map(rows, "decideur", LABELS["decideur"]), "decideur"),
             "ailleurs": _labeled(_count_map(rows, "ailleurs", LABELS["ailleurs"]), "ailleurs"),
-            "abonnement": _labeled(_count_map(rows, "abonnement", LABELS["abonnement"]), "abonnement"),
+            "abonnement": _labeled(
+                _count_map(rows, "abonnement", LABELS["abonnement"], _abonnement_key),
+                "abonnement",
+            ),
             "pilote": _labeled(_count_map(rows, "pilote", LABELS["pilote"]), "pilote"),
             "role": _labeled(_count_map(rows, "role", LABELS["role"]), "role"),
             "taille": _labeled(_count_map(rows, "taille", LABELS["taille"]), "taille"),
