@@ -79,10 +79,10 @@ LABELS = {
         "nsp": "Je ne sais pas",
     },
     "abonnement": {
-        "oui": "OK, abo au mois",
+        "oui": "OK, abonnement au mois",
         "selon": "OK, selon le montant",
         "achat": "OK, préfère payer une année d’avance",
-        "non": "Le prix de l’abo me gêne (mais il reste obligatoire)",
+        "non": "Le prix de l’abonnement me gêne (mais il reste obligatoire)",
         "nsp": "Je ne sais pas encore",
     },
     "interet": {
@@ -387,7 +387,7 @@ def _person_card(row):
     if qui:
         bits.append("Doivent pouvoir ouvrir : " + ", ".join(qui) + ".")
     bits.append(f"Intérêt EmpreintePro : {interet_label}. Suite : {pilote_label}.")
-    bits.append(f"Installation (budget) : {budget}. Abo plateforme (enrôlement / droits) : {abonnement}.")
+    bits.append(f"Installation (budget) : {budget}. Abonnement plateforme (enrôlement / droits) : {abonnement}.")
     bits.append(f"Urgence : {urgence}. Décideur : {decideur}. Vu ailleurs : {ailleurs}.")
     if concurrents:
         bits.append("Concurrents connus : " + ", ".join(concurrents) + ".")
