@@ -87,9 +87,9 @@ LABELS = {
     },
     "interet": {
         "oui": "Oui, clairement",
-        "peut": "Peut-être, selon le prix",
+        "peut": "Oui, selon les prix",
         "plus": "Intéressant, plus tard",
-        "non": "Non, pas pour moi",
+        "non": "Non",
     },
     "frein": {
         "prix": "Le prix",
