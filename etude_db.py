@@ -24,6 +24,7 @@ LABELS = {
         "particulier": "Particulier / maison",
         "cabinet": "Cabinet / clinique",
         "cowork": "Coworking / immeuble",
+        "autre": "Autre",
     },
     "moyen": {
         "cles": "Clés",

@@ -23,61 +23,49 @@
         </div>
         <p class="kicker">Questionnaire terrain</p>
         <h1>Comment gérez-vous l’accès à vos locaux ou à votre maison ?</h1>
-        <p class="lead">Six minutes. Destiné aux PME comme aux particuliers. D’abord le film, ensuite vos réponses.</p>
+        <p class="lead">Environ 3 minutes. PME ou particulier. Film court, puis quelques questions utiles.</p>
         {% include "_film.html" %}
         <div class="facts">
-          <div class="fact"><b>Anonyme si vous voulez</b><span>Le nom reste optionnel</span></div>
-          <div class="fact"><b>Un site</b><span>Entreprise ou particulier</span></div>
+          <div class="fact"><b>Anonyme si vous voulez</b><span>Nom optionnel</span></div>
           <div class="fact"><b>Pas de vente ici</b><span>On écoute d’abord</span></div>
+          <div class="fact"><b>Court</b><span>Seulement l’essentiel</span></div>
         </div>
       </header>
 
       <form id="surveyForm">
         <p class="error-box" id="surveyError"></p>
+
         <section class="block">
           <div class="sec-head">
             <span class="num">01</span>
-            <h2>Vous et votre site</h2>
+            <h2>Vous et le site</h2>
           </div>
 
           <div class="q">
-            <span class="label">Quel est votre rôle ?</span>
+            <span class="label">Votre rôle</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="role" value="dirigeant"> Dirigeant / gérant</label>
-              <label class="opt"><input type="radio" name="role" value="admin"> Administration / RH</label>
-              <label class="opt"><input type="radio" name="role" value="securite"> Sécurité / maintenance</label>
               <label class="opt"><input type="radio" name="role" value="proprio"> Propriétaire / particulier</label>
+              <label class="opt"><input type="radio" name="role" value="admin"> Admin / RH</label>
+              <label class="opt"><input type="radio" name="role" value="securite"> Sécurité / maintenance</label>
               <label class="opt"><input type="radio" name="role" value="autre"> Autre</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Votre site</span>
+            <span class="label">Type de site</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="type" value="pme"> PME / bureau</label>
               <label class="opt"><input type="radio" name="type" value="commerce"> Commerce / boutique</label>
               <label class="opt"><input type="radio" name="type" value="particulier"> Particulier / maison</label>
-              <label class="opt"><input type="radio" name="type" value="entrepot"> Entrepôt / dépôt (pro ou perso)</label>
-              <label class="opt"><input type="radio" name="type" value="cabinet"> Cabinet / clinique</label>
-              <label class="opt"><input type="radio" name="type" value="ecole"> École / formation</label>
-              <label class="opt"><input type="radio" name="type" value="cowork"> Coworking / immeuble</label>
+              <label class="opt"><input type="radio" name="type" value="entrepot"> Entrepôt / dépôt</label>
+              <label class="opt"><input type="radio" name="type" value="autre"> Autre</label>
             </div>
           </div>
 
           <div class="row">
             <div class="q">
-              <label class="label" for="taille">Combien de personnes utilisent ce site ?</label>
-              <select id="taille" name="taille">
-                <option value="">Choisir</option>
-                <option>1 à 5 (foyer / petit site)</option>
-                <option>6 à 10</option>
-                <option>11 à 30</option>
-                <option>31 à 80</option>
-                <option>Plus de 80</option>
-              </select>
-            </div>
-            <div class="q">
-              <label class="label" for="zone">Où se trouve votre site ?</label>
+              <label class="label" for="zone">Zone</label>
               <select id="zone" name="zone">
                 <option value="">Choisir</option>
                 <option>Plateau</option>
@@ -91,17 +79,27 @@
                 <option>Hors région de Dakar</option>
               </select>
             </div>
+            <div class="q">
+              <label class="label" for="portes">Portes / zones à contrôler</label>
+              <select id="portes" name="portes">
+                <option value="">Choisir</option>
+                <option>1</option>
+                <option>2 à 4</option>
+                <option>5 à 10</option>
+                <option>Plus de 10</option>
+              </select>
+            </div>
           </div>
         </section>
 
         <section class="block">
           <div class="sec-head">
             <span class="num">02</span>
-            <h2>L’accès, aujourd’hui</h2>
+            <h2>Accès et problèmes</h2>
           </div>
 
           <div class="q">
-            <span class="label">Comment on accède au site aujourd’hui ? <span class="hint">Maison ou entreprise — plusieurs réponses possibles</span></span>
+            <span class="label">Comment on entre aujourd’hui ? <span class="hint">Plusieurs possibles</span></span>
             <div class="choices two">
               <label class="opt"><input type="checkbox" name="moyen" value="cles"> Clés</label>
               <label class="opt"><input type="checkbox" name="moyen" value="badges"> Badges / cartes</label>
@@ -113,25 +111,23 @@
           </div>
 
           <div class="q">
-            <label class="label" for="portes">Combien de portes ou zones à contrôler ?</label>
-            <select id="portes" name="portes">
-              <option value="">Choisir</option>
-              <option>1</option>
-              <option>2 à 4</option>
-              <option>5 à 10</option>
-              <option>Plus de 10</option>
-            </select>
+            <span class="label">Qu’est-ce qui gêne le plus ? <span class="hint">Plusieurs possibles</span></span>
+            <div class="choices">
+              <label class="opt"><input type="checkbox" name="douleur" value="pertes"> Clés / badges perdus ou prêtés</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="trace"> On ne sait pas qui est entré</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="depart"> Quelqu’un part, l’accès reste</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="temps"> Trop long pour donner / retirer un droit</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="rien"> Pas de vrai problème</label>
+            </div>
           </div>
 
           <div class="q">
-            <span class="label">Quelles solutions d’accès connaissez-vous ? <span class="hint">Plusieurs réponses possibles</span></span>
+            <span class="label">Qui décide d’acheter / d’installer ?</span>
             <div class="choices two">
-              <label class="opt"><input type="checkbox" name="concurrent" value="zkteco"> ZKTeco</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="hikvision"> Hikvision</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="suprema"> Suprema</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="local"> Installateur / marque locale</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="autre"> Autre (badge, digicode…)</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="aucun"> Aucune en particulier</label>
+              <label class="opt"><input type="radio" name="decideur" value="moi"> Moi</label>
+              <label class="opt"><input type="radio" name="decideur" value="associe"> Avec associé / famille</label>
+              <label class="opt"><input type="radio" name="decideur" value="siege"> Un responsable au-dessus</label>
+              <label class="opt"><input type="radio" name="decideur" value="nsp"> Pas encore clair</label>
             </div>
           </div>
         </section>
@@ -139,76 +135,12 @@
         <section class="block">
           <div class="sec-head">
             <span class="num">03</span>
-            <h2>Ce qui pose problème</h2>
-          </div>
-
-          <div class="q">
-            <span class="label">Qu’est-ce qui vous gêne le plus ? <span class="hint">Cochez tout ce qui est vrai</span></span>
-            <div class="choices">
-              <label class="opt"><input type="checkbox" name="douleur" value="pertes"> Clés ou badges perdus, prêtés, copiés</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="codes"> Codes connus de trop de monde</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="trace"> On ne sait pas vraiment qui est entré</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="depart"> Quelqu’un part, et l’accès reste ouvert</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="temps"> Trop de temps pour donner ou retirer un droit</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="rien"> Pas de vrai problème pour le moment</label>
-            </div>
-          </div>
-
-          <div class="q">
-            <label class="label" for="incident">Un cas concret, si vous en avez un</label>
-            <textarea id="incident" name="incident" placeholder="Ex. badge prêté, porte restée ouverte, vol, oubli de registre…"></textarea>
-          </div>
-        </section>
-
-        <section class="block">
-          <div class="sec-head">
-            <span class="num">04</span>
-            <h2>Ce que vous attendez</h2>
-          </div>
-
-          <div class="q">
-            <span class="label">Pour vous, l’essentiel serait… <span class="hint">Une seule priorité</span></span>
-            <div class="choices">
-              <label class="opt"><input type="radio" name="priorite" value="securite"> Sécuriser : plus de clé ou badge qui circule</label>
-              <label class="opt"><input type="radio" name="priorite" value="gerer"> Gérer : donner et retirer un droit tout de suite</label>
-              <label class="opt"><input type="radio" name="priorite" value="tracer"> Tracer : savoir qui est passé, et quand</label>
-              <label class="opt"><input type="radio" name="priorite" value="simple"> Rester simple : que ça marche, sans usine à gaz</label>
-            </div>
-          </div>
-
-          <div class="q">
-            <span class="label">Qui doit pouvoir ouvrir ?</span>
-            <div class="choices two">
-              <label class="opt"><input type="checkbox" name="qui" value="salaries"> Salariés</label>
-              <label class="opt"><input type="checkbox" name="qui" value="temps"> Personnel temporaire</label>
-              <label class="opt"><input type="checkbox" name="qui" value="visiteurs"> Visiteurs / prestataires</label>
-              <label class="opt"><input type="checkbox" name="qui" value="direction"> Direction seulement, sur certaines zones</label>
-              <label class="opt"><input type="checkbox" name="qui" value="proprio"> Propriétaire / particulier</label>
-              <label class="opt"><input type="checkbox" name="qui" value="famille"> Famille / proches</label>
-              <label class="opt"><input type="checkbox" name="qui" value="maison"> Personnel de maison / gardien</label>
-            </div>
-          </div>
-
-          <div class="q">
-            <span class="label">Qui peut décider d’acheter / d’installer EmpreintePro ? <span class="hint">Une seule réponse</span></span>
-            <div class="choices two">
-              <label class="opt"><input type="radio" name="decideur" value="moi"> Moi, je décide</label>
-              <label class="opt"><input type="radio" name="decideur" value="associe"> Avec un associé / la famille</label>
-              <label class="opt"><input type="radio" name="decideur" value="siege"> Un responsable au-dessus de moi (siège, DG…)</label>
-              <label class="opt"><input type="radio" name="decideur" value="nsp"> Je ne sais pas encore</label>
-            </div>
-          </div>
-        </section>
-
-        <section class="block">
-          <div class="sec-head">
-            <span class="num">05</span>
-            <h2>EmpreintePro, en une phrase</h2>
+            <h2>EmpreintePro</h2>
           </div>
 
           <div class="pitch">
-            <small>À lire au répondant</small>
-            <p>EmpreintePro, c’est une serrure à empreinte sur votre porte — bureau, commerce, entrepôt ou maison — reliée à une plateforme web (serveur). C’est sur la plateforme qu’on enrôle une personne, qu’on change ou retire un accès, qu’on voit qui est passé, et qu’on peut demander à une IA d’expliquer l’historique. Sans plateforme, pas d’enrôlement ni de gestion des droits. Deux prix : l’installation (matériel + pose), et l’abonnement plateforme (obligatoire — au mois ou une année d’avance). Pose et suivi à Dakar. Ouvert aux PME et aux particuliers.</p>
+            <small>À lire</small>
+            <p>EmpreintePro = serrure à empreinte + plateforme web. Sur la plateforme on enrôle une personne, on change ou retire un accès, on voit l’historique. Sans plateforme, pas d’enrôlement ni de gestion des droits. Deux prix : installation (matériel + pose), et abonnement plateforme obligatoire (au mois ou une année d’avance). Pose et suivi à Dakar.</p>
           </div>
 
           <div class="q">
@@ -222,69 +154,42 @@
           </div>
 
           <div class="q">
-            <span class="label">Avez-vous déjà vu ailleurs une offre comme EmpreintePro (empreinte + plateforme pour gérer plusieurs portes) ?</span>
+            <span class="label">Qu’est-ce qui vous arrêterait ? <span class="hint">Plusieurs possibles</span></span>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="ailleurs" value="oui"> Oui, j’ai déjà vu ça</label>
-              <label class="opt"><input type="radio" name="ailleurs" value="proche"> Quelque chose de proche, mais pas pareil</label>
-              <label class="opt"><input type="radio" name="ailleurs" value="non"> Non, jamais</label>
-              <label class="opt"><input type="radio" name="ailleurs" value="nsp"> Je ne sais pas</label>
-            </div>
-          </div>
-
-          <div class="q">
-            <span class="label">Qu’est-ce qui vous arrêterait ?</span>
-            <div class="choices">
               <label class="opt"><input type="checkbox" name="frein" value="prix"> Le prix</label>
-              <label class="opt"><input type="checkbox" name="frein" value="confiance"> La confiance / les données biométriques</label>
-              <label class="opt"><input type="checkbox" name="frein" value="panne"> La peur de la panne (porte bloquée)</label>
-              <label class="opt"><input type="checkbox" name="frein" value="complexe"> Trop complexe à installer ou à utiliser</label>
-              <label class="opt"><input type="checkbox" name="frein" value="existant"> On a déjà un système</label>
+              <label class="opt"><input type="checkbox" name="frein" value="confiance"> Données biométriques</label>
+              <label class="opt"><input type="checkbox" name="frein" value="panne"> Peur de la panne</label>
+              <label class="opt"><input type="checkbox" name="frein" value="complexe"> Trop complexe</label>
+              <label class="opt"><input type="checkbox" name="frein" value="existant"> Système déjà en place</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Pour l’installation d’une porte (matériel + pose), quel ordre de budget vous paraît réaliste ? <span class="hint">Prix une fois — séparé de l’abo plateforme</span></span>
+            <span class="label">Budget installation (matériel + pose) <span class="hint">Une fois, hors abo</span></span>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="budget" value="lt100"> Moins de 100 000 FCFA</label>
-              <label class="opt"><input type="radio" name="budget" value="100_300"> 100 000 à 300 000 FCFA</label>
-              <label class="opt"><input type="radio" name="budget" value="300_500"> 300 000 à 500 000 FCFA</label>
-              <label class="opt"><input type="radio" name="budget" value="plus500"> Plus de 500 000 FCFA</label>
-              <label class="opt"><input type="radio" name="budget" value="nsp"> Je ne sais pas encore</label>
+              <label class="opt"><input type="radio" name="budget" value="lt100"> &lt; 100 000 FCFA</label>
+              <label class="opt"><input type="radio" name="budget" value="100_300"> 100–300 000</label>
+              <label class="opt"><input type="radio" name="budget" value="300_500"> 300–500 000</label>
+              <label class="opt"><input type="radio" name="budget" value="plus500"> &gt; 500 000</label>
+              <label class="opt"><input type="radio" name="budget" value="nsp"> Je ne sais pas</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">L’abonnement paye la plateforme (enrôler, changer les accès, historique). Il est obligatoire — on peut le payer au mois ou une année d’avance. Pour vous :</span>
+            <span class="label">Abo plateforme (obligatoire — enrôler / droits). Au mois ou une année d’avance :</span>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="abonnement" value="oui"> OK, je paie l’abo au mois</label>
-              <label class="opt"><input type="radio" name="abonnement" value="selon"> OK, selon le montant</label>
-              <label class="opt"><input type="radio" name="abonnement" value="achat"> OK, je préfère payer une année d’avance</label>
-              <label class="opt"><input type="radio" name="abonnement" value="non"> Le prix de l’abo me gêne, mais je comprends qu’il faut le payer</label>
-              <label class="opt"><input type="radio" name="abonnement" value="nsp"> Je ne sais pas encore</label>
-            </div>
-          </div>
-        </section>
-
-        <section class="block">
-          <div class="sec-head">
-            <span class="num">06</span>
-            <h2>Et ensuite ?</h2>
-          </div>
-
-          <div class="q">
-            <span class="label">C’est un sujet pour quand ?</span>
-            <div class="choices two">
-              <label class="opt"><input type="radio" name="urgence" value="maintenant"> Maintenant / très bientôt</label>
-              <label class="opt"><input type="radio" name="urgence" value="6mois"> Dans les 6 mois</label>
-              <label class="opt"><input type="radio" name="urgence" value="plus_tard"> Plus tard</label>
-              <label class="opt"><input type="radio" name="urgence" value="curiosite"> Juste de la curiosité</label>
+              <label class="opt"><input type="radio" name="abonnement" value="oui"> OK au mois</label>
+              <label class="opt"><input type="radio" name="abonnement" value="selon"> OK selon le montant</label>
+              <label class="opt"><input type="radio" name="abonnement" value="achat"> OK, une année d’avance</label>
+              <label class="opt"><input type="radio" name="abonnement" value="non"> Le prix me gêne (mais abo obligatoire)</label>
+              <label class="opt"><input type="radio" name="abonnement" value="nsp"> Je ne sais pas</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Seriez-vous ouvert à essayer le système (démo ou période d’essai) ?</span>
+            <span class="label">Suite possible ?</span>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="pilote" value="ouvert"> Oui, je veux voir ça chez moi / chez nous</label>
+              <label class="opt"><input type="radio" name="pilote" value="ouvert"> Oui, essayer chez moi / chez nous</label>
               <label class="opt"><input type="radio" name="pilote" value="voir"> Oui, d’abord une démo</label>
               <label class="opt"><input type="radio" name="pilote" value="budget"> Peut-être, si c’est simple</label>
               <label class="opt"><input type="radio" name="pilote" value="non"> Pas pour le moment</label>
@@ -294,22 +199,22 @@
           <div class="row">
             <div class="q">
               <label class="label" for="nom">Nom <span class="hint">Optionnel</span></label>
-              <input type="text" id="nom" name="nom" placeholder="Prénom, entreprise ou particulier">
+              <input type="text" id="nom" name="nom" placeholder="Prénom ou structure">
             </div>
             <div class="q">
-              <label class="label" for="tel">Contact <span class="hint">Optionnel</span></label>
-              <input type="tel" id="tel" name="tel" placeholder="Téléphone ou WhatsApp">
+              <label class="label" for="tel">WhatsApp / tél. <span class="hint">Optionnel</span></label>
+              <input type="tel" id="tel" name="tel" placeholder="Contact">
             </div>
           </div>
 
           <div class="q">
-            <label class="label" for="fin">Un mot de plus, si vous voulez</label>
-            <textarea id="fin" name="fin" placeholder="Ce qu’il faudrait pour que ce soit utile chez vous."></textarea>
+            <label class="label" for="fin">Un mot libre <span class="hint">Optionnel</span></label>
+            <textarea id="fin" name="fin" rows="2" placeholder="Ex. coupures de courant, besoin batterie de secours…"></textarea>
           </div>
         </section>
 
         <div class="actions">
-          <p class="note">6 minutes · vos réponses aident l’étude de marché EmpreintePro</p>
+          <p class="note">~3 minutes · étude de marché EmpreintePro</p>
           <div class="btn-row">
             <a class="ghost" href="{{ url_for('etude_docs') }}">Lire la doc</a>
             <button class="btn" id="surveySubmit" type="submit">Envoyer</button>
