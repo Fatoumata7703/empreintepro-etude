@@ -357,12 +357,28 @@ def _multi_labels(row, field, group):
     return [labels.get(k, k) for k in keys if k]
 
 
+def _budget_keys(row):
+    raw = _row_get(row, "budget")
+    keys = _load(raw)
+    if keys:
+        return keys
+    if raw:
+        return [raw]
+    return []
+
+
+def _budget_labels(row):
+    labels = LABELS["budget"]
+    return [labels.get(k, k) for k in _budget_keys(row) if k]
+
+
 def _person_card(row):
     moyens = _multi_labels(row, "moyens", "moyen")
     douleurs = _multi_labels(row, "douleurs", "douleur")
     freins = _multi_labels(row, "freins", "frein")
     concurrents = _multi_labels(row, "concurrents", "concurrent")
     qui = _multi_labels(row, "qui", "qui")
+    budgets = _budget_labels(row)
     interet = _row_get(row, "interet") or ""
     pilote = _row_get(row, "pilote") or ""
     nom = _row_get(row, "nom") or ""
@@ -378,7 +394,7 @@ def _person_card(row):
     priorite = LABELS["priorite"].get(_row_get(row, "priorite"), _row_get(row, "priorite") or "—")
     interet_label = LABELS["interet"].get(interet, interet or "—")
     pilote_label = LABELS["pilote"].get(pilote, pilote or "—")
-    budget = LABELS["budget"].get(_row_get(row, "budget"), _row_get(row, "budget") or "—")
+    budget = ", ".join(budgets) if budgets else "—"
     urgence = LABELS["urgence"].get(_row_get(row, "urgence"), _row_get(row, "urgence") or "—")
     decideur = LABELS["decideur"].get(_row_get(row, "decideur"), _row_get(row, "decideur") or "—")
     ailleurs = LABELS["ailleurs"].get(_row_get(row, "ailleurs"), _row_get(row, "ailleurs") or "—")
@@ -461,7 +477,7 @@ def save_response(payload):
         (payload.get("fin") or "").strip()[:800],
         _dump(payload.get("concurrents")),
         payload.get("decideur") or "",
-        payload.get("budget") or "",
+        _dump(payload.get("budget")),
         payload.get("urgence") or "",
         payload.get("ailleurs") or "",
         payload.get("abonnement") or "",
@@ -498,6 +514,15 @@ def save_response(payload):
         )
         conn.commit()
         return cur.lastrowid
+
+
+def _count_budget(rows):
+    counts = {key: 0 for key in LABELS["budget"]}
+    for row in rows:
+        for value in _budget_keys(row):
+            if value in counts:
+                counts[value] += 1
+    return counts
 
 
 def _count_map(rows, field, keys, normalize=None):
@@ -565,7 +590,7 @@ def stats():
             "priorite": _labeled(_count_map(rows, "priorite", LABELS["priorite"]), "priorite"),
             "interet": _labeled(_count_map(rows, "interet", LABELS["interet"]), "interet"),
             "freins": _labeled(_count_multi(rows, "freins", LABELS["frein"]), "frein"),
-            "budget": _labeled(_count_map(rows, "budget", LABELS["budget"]), "budget"),
+            "budget": _labeled(_count_budget(rows), "budget"),
             "urgence": _labeled(_count_map(rows, "urgence", LABELS["urgence"]), "urgence"),
             "decideur": _labeled(_count_map(rows, "decideur", LABELS["decideur"]), "decideur"),
             "ailleurs": _labeled(_count_map(rows, "ailleurs", LABELS["ailleurs"]), "ailleurs"),

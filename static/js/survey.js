@@ -34,7 +34,7 @@ form.addEventListener("submit", async (event) => {
     interet: value("interet"),
     freins: values("frein"),
     ailleurs: "",
-    budget: value("budget"),
+    budget: values("budget"),
     abonnement: value("abonnement"),
     urgence: "",
     pilote: value("pilote"),
