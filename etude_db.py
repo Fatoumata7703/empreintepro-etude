@@ -78,10 +78,10 @@ LABELS = {
         "nsp": "Je ne sais pas",
     },
     "abonnement": {
-        "oui": "Oui, un abo me va",
-        "selon": "Selon le prix",
-        "achat": "Payer une fois, sans abo",
-        "non": "Pas d’abonnement",
+        "oui": "OK, l’abo plateforme me va",
+        "selon": "OK, selon le montant mensuel",
+        "achat": "Préfère tout payer à l’installation",
+        "non": "Payer chaque mois me gêne",
         "nsp": "Je ne sais pas encore",
     },
     "interet": {
@@ -98,10 +98,10 @@ LABELS = {
         "existant": "Système déjà en place",
     },
     "budget": {
-        "lt100": "Moins de 100 000 FCFA",
-        "100_300": "100 000 à 300 000 FCFA",
-        "300_500": "300 000 à 500 000 FCFA",
-        "plus500": "Plus de 500 000 FCFA",
+        "lt100": "Moins de 100 000 FCFA (installation)",
+        "100_300": "100 000 à 300 000 FCFA (installation)",
+        "300_500": "300 000 à 500 000 FCFA (installation)",
+        "plus500": "Plus de 500 000 FCFA (installation)",
         "nsp": "Je ne sais pas encore",
     },
     "urgence": {
@@ -386,8 +386,8 @@ def _person_card(row):
     if qui:
         bits.append("Doivent pouvoir ouvrir : " + ", ".join(qui) + ".")
     bits.append(f"Intérêt EmpreintePro : {interet_label}. Suite : {pilote_label}.")
-    bits.append(f"Budget : {budget}. Urgence : {urgence}. Décideur : {decideur}.")
-    bits.append(f"Vu ailleurs : {ailleurs}. Abonnement : {abonnement}.")
+    bits.append(f"Installation (budget) : {budget}. Plateforme / abo : {abonnement}.")
+    bits.append(f"Urgence : {urgence}. Décideur : {decideur}. Vu ailleurs : {ailleurs}.")
     if concurrents:
         bits.append("Concurrents connus : " + ", ".join(concurrents) + ".")
     if freins:
