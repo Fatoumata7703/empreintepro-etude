@@ -156,8 +156,8 @@ function bars(id, data, emptyText = "Aucune réponse pour ce graphique.") {
 }
 
 function badge(key) {
-  if (key === "oui") return '<span class="badge hot">Oui, clairement</span>';
-  if (key === "peut") return '<span class="badge warm">Oui, selon les prix</span>';
+  if (key === "oui") return '<span class="badge hot">Oui</span>';
+  if (key === "peut") return '<span class="badge warm">Selon le prix</span>';
   if (key === "plus") return '<span class="badge warm">Plus tard</span>';
   if (key === "non") return '<span class="badge cold">Pas intéressé</span>';
   return '<span class="badge cold">—</span>';
@@ -263,8 +263,8 @@ async function loadStats() {
   document.getElementById("kpiYes").textContent = `${data.pct_yes} %`;
   document.getElementById("kpiWarm").textContent = `${data.pct_warm} %`;
   document.getElementById("kpiPilot").textContent = data.pilot_open;
-  document.getElementById("kpiYesHint").textContent = `${data.interest_yes} « Oui, clairement » seulement`;
-  document.getElementById("kpiWarmHint").textContent = `${data.interest_maybe} « Oui, clairement » + « Oui, selon les prix »`;
+  document.getElementById("kpiYesHint").textContent = `${data.interest_yes} « Oui » seulement`;
+  document.getElementById("kpiWarmHint").textContent = `${data.interest_maybe} « Oui » + « Selon le prix »`;
   document.getElementById("kpiPilotHint").textContent = "uniquement « essayer chez moi » (pas la démo)";
   document.getElementById("kpiContact").textContent = data.with_contact;
 

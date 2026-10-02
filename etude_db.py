@@ -86,8 +86,8 @@ LABELS = {
         "nsp": "Je ne sais pas encore",
     },
     "interet": {
-        "oui": "Oui, clairement",
-        "peut": "Oui, selon les prix",
+        "oui": "Oui",
+        "peut": "Selon le prix",
         "plus": "Intéressant, plus tard",
         "non": "Non",
     },
