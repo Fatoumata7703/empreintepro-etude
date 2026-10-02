@@ -200,7 +200,7 @@ function openPerson(id) {
       ${field("Freins", joinList(row.freins))}
       ${field("Concurrents", joinList(row.concurrents))}
       ${field("Budget installation", row.budget)}
-      ${field("Abo plateforme (serveur)", row.abonnement)}
+      ${field("Abo plateforme (enrôlement / droits)", row.abonnement)}
       ${field("Urgence", row.urgence)}
       ${field("Démo / essai", row.pilote)}
       ${field("Cas concret", row.incident || "—")}
