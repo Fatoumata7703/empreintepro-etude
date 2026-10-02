@@ -554,6 +554,57 @@ def _labeled(counts, group):
     }
 
 
+def _timeline(rows):
+    by_day = {}
+    for row in rows:
+        raw = str(_row_get(row, "created_at") or "")
+        day = raw[:10] if len(raw) >= 10 else ""
+        if not day or day[0] == "-":
+            continue
+        bucket = by_day.setdefault(
+            day,
+            {"total": 0, "oui": 0, "peut": 0, "non": 0, "plus": 0, "contact": 0, "pilot": 0},
+        )
+        bucket["total"] += 1
+        interet = _row_get(row, "interet") or ""
+        if interet in ("oui", "peut", "non", "plus"):
+            bucket[interet] += 1
+        if _row_get(row, "nom") or _row_get(row, "tel"):
+            bucket["contact"] += 1
+        if _row_get(row, "pilote") == "ouvert":
+            bucket["pilot"] += 1
+
+    days = sorted(by_day.keys())
+    cumulative = []
+    run = 0
+    for day in days:
+        run += by_day[day]["total"]
+        cumulative.append(run)
+
+    return {
+        "labels": days,
+        "daily": [by_day[d]["total"] for d in days],
+        "cumulative": cumulative,
+        "oui": [by_day[d]["oui"] for d in days],
+        "peut": [by_day[d]["peut"] for d in days],
+        "non": [by_day[d]["non"] for d in days],
+        "contact": [by_day[d]["contact"] for d in days],
+        "pilot": [by_day[d]["pilot"] for d in days],
+    }
+
+
+def _funnel(total, interest_maybe, with_contact, pilot_open):
+    return {
+        "labels": [
+            "Réponses",
+            "Ouverts (oui + prix)",
+            "Avec contact",
+            "Essai chez eux",
+        ],
+        "values": [total, interest_maybe, with_contact, pilot_open],
+    }
+
+
 def stats():
     with connect() as conn:
         _ensure_columns(conn)
@@ -563,6 +614,7 @@ def stats():
     total = len(rows)
     interest_yes = sum(1 for r in rows if _row_get(r, "interet") == "oui")
     interest_maybe = sum(1 for r in rows if _row_get(r, "interet") in ("oui", "peut"))
+    interest_no = sum(1 for r in rows if _row_get(r, "interet") == "non")
     pilot_open = sum(1 for r in rows if _row_get(r, "pilote") == "ouvert")
     with_contact = sum(1 for r in rows if (_row_get(r, "nom") or _row_get(r, "tel")))
 
@@ -578,10 +630,14 @@ def stats():
         "total": total,
         "interest_yes": interest_yes,
         "interest_maybe": interest_maybe,
+        "interest_no": interest_no,
         "pilot_open": pilot_open,
         "with_contact": with_contact,
         "pct_yes": round(100 * interest_yes / total) if total else 0,
         "pct_warm": round(100 * interest_maybe / total) if total else 0,
+        "pct_contact": round(100 * with_contact / total) if total else 0,
+        "timeline": _timeline(rows),
+        "funnel": _funnel(total, interest_maybe, with_contact, pilot_open),
         "charts": {
             "org_type": _labeled(_count_map(rows, "org_type", LABELS["org_type"]), "org_type"),
             "moyens": _labeled(_count_multi(rows, "moyens", LABELS["moyen"]), "moyen"),

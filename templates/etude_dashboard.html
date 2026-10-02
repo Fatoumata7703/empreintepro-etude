@@ -14,21 +14,26 @@
   <header class="dash-bar">
     <a class="brand" href="{{ url_for('etude_dashboard') }}">
       <img src="{{ url_for('static', filename='img/logo-icon.png') }}" alt="">
-      <span>Étude de marché</span>
+      <span>Dashboard étude</span>
     </a>
     <div class="btn-row">
       <a class="ghost" href="{{ url_for('etude_de_marche') }}">Questionnaire</a>
+      <a class="ghost" href="/api/export">CSV</a>
       <a class="ghost" href="{{ url_for('etude_logout') }}">Sortir</a>
     </div>
   </header>
 
   <main class="dash-main">
-    <p class="dash-intro">
-      Lecture rapide des KPI : <strong>Intéressés</strong> = uniquement « Oui ».
-      <strong>Ouverts</strong> = « Oui » + « Selon le prix ».
-      <strong>Ouverts à un essai</strong> = uniquement « essayer chez moi » (une démo seule ne compte pas ici).
-      Survole un graphique pour voir le détail.
-    </p>
+    <div class="dash-title-row">
+      <div>
+        <h1 class="dash-title">Analyse des réponses au questionnaire</h1>
+        <p class="dash-intro">
+          Chaque graphique correspond à une question du formulaire.
+          Les courbes montrent l’évolution dans le temps.
+          <strong>Ouverts</strong> = Oui + Selon le prix · <strong>Essai</strong> = essayer chez moi.
+        </p>
+      </div>
+    </div>
 
     <div class="kpis">
       <div class="kpi">
@@ -37,7 +42,7 @@
         <span>questionnaires reçus</span>
       </div>
       <div class="kpi">
-        <small>Intéressés EmpreintePro</small>
+        <small>Intéressés</small>
         <strong id="kpiYes">0 %</strong>
         <span id="kpiYesHint">uniquement « Oui »</span>
       </div>
@@ -47,139 +52,163 @@
         <span id="kpiWarmHint">« Oui » + « Selon le prix »</span>
       </div>
       <div class="kpi">
-        <small>Ouverts à un essai</small>
+        <small>Contacts</small>
+        <strong id="kpiContactPct">0 %</strong>
+        <span><span id="kpiContact">0</span> ont laissé un contact</span>
+      </div>
+      <div class="kpi">
+        <small>Essais ouverts</small>
         <strong id="kpiPilot">0</strong>
         <span id="kpiPilotHint">uniquement « essayer chez moi »</span>
       </div>
     </div>
-    <p class="note" style="margin:-0.4rem 0 1rem;">Contacts laissés : <strong id="kpiContact">0</strong> · <a href="/api/export">Télécharger CSV</a></p>
 
+    <h2 class="dash-section">Évolution des réponses</h2>
+    <div class="charts">
+      <div class="card wide">
+        <h3>Volume de réponses</h3>
+        <p class="chart-sub">Cumul + réponses reçues par jour</p>
+        <div class="chart-box tall"><canvas id="chartTimeline"></canvas></div>
+      </div>
+      <div class="card wide">
+        <h3>Q · Ça vous parle ? — dans le temps</h3>
+        <p class="chart-sub">Oui · Selon le prix · Non — par jour</p>
+        <div class="chart-box tall"><canvas id="chartInterestTrend"></canvas></div>
+      </div>
+      <div class="card wide">
+        <h3>Funnel : réponse → intérêt → contact → essai</h3>
+        <p class="chart-sub">Lecture de conversion à partir des réponses</p>
+        <div class="chart-box"><canvas id="chartFunnel"></canvas></div>
+      </div>
+    </div>
+
+    <h2 class="dash-section">1 · Profil</h2>
     <div class="charts">
       <div class="card">
-        <h3>Intérêt pour EmpreintePro</h3>
-        <p class="chart-sub">Est-ce que l’offre leur parle ?</p>
-        <div class="chart-box"><canvas id="chartInteret"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Types d’organisations</h3>
-        <p class="chart-sub">PME, commerce, particulier…</p>
-        <div class="chart-box"><canvas id="chartOrgs"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Accès aujourd’hui</h3>
-        <p class="chart-sub">Comment ils contrôlent l’entrée maintenant</p>
-        <div class="chart-box"><canvas id="chartMoyens"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Ce qui pose problème</h3>
-        <p class="chart-sub">Douleurs liées à l’accès actuel</p>
-        <div class="chart-box"><canvas id="chartDouleurs"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Freins à EmpreintePro</h3>
-        <p class="chart-sub">Ce qui pourrait les arrêter</p>
-        <div class="chart-box"><canvas id="chartFreins"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Concurrents connus</h3>
-        <p class="chart-sub">Marques / solutions déjà repérées</p>
-        <div class="chart-box"><canvas id="chartConcurrents"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Budget installation</h3>
-        <p class="chart-sub">Tarifs jugés convenables (plusieurs choix possibles)</p>
-        <div class="chart-box"><canvas id="chartBudget"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Urgence</h3>
-        <p class="chart-sub">Quand ils envisagent le sujet</p>
-        <div class="chart-box"><canvas id="chartUrgence"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Qui décide</h3>
-        <p class="chart-sub">Qui peut valider un achat / une pose</p>
-        <div class="chart-box"><canvas id="chartDecideur"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Vu ailleurs ?</h3>
-        <p class="chart-sub">Ont-ils déjà vu une offre proche</p>
-        <div class="chart-box"><canvas id="chartAilleurs"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Abonnement à la plateforme</h3>
-        <p class="chart-sub">Préférence de paiement : par mois, semestre ou an</p>
-        <div class="chart-box"><canvas id="chartAbonnement"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Démo / essai</h3>
-        <p class="chart-sub">Démo d’abord, ou essai sur site</p>
-        <div class="chart-box"><canvas id="chartPilote"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Zones à Dakar</h3>
-        <p class="chart-sub">Où se trouve le site</p>
-        <div class="chart-box"><canvas id="chartZone"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Taille du site</h3>
-        <p class="chart-sub">Combien de personnes utilisent le lieu</p>
-        <div class="chart-box"><canvas id="chartTaille"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Rôle du répondant</h3>
-        <p class="chart-sub">Qui a rempli le questionnaire</p>
+        <h3>Q · Rôle</h3>
+        <p class="chart-sub">Qui a répondu</p>
         <div class="chart-box"><canvas id="chartRole"></canvas></div>
       </div>
       <div class="card">
-        <h3>Nombre de portes</h3>
+        <h3>Q · Site</h3>
+        <p class="chart-sub">PME, commerce, maison…</p>
+        <div class="chart-box"><canvas id="chartOrgs"></canvas></div>
+      </div>
+      <div class="card wide">
+        <h3>Q · Zone</h3>
+        <p class="chart-sub">Où se trouve le site à Dakar</p>
+        <div class="chart-box"><canvas id="chartZone"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Q · Nombre de portes</h3>
         <p class="chart-sub">Portes / zones à contrôler</p>
         <div class="chart-box"><canvas id="chartPortes"></canvas></div>
       </div>
       <div class="card">
-        <h3>Priorité attendue</h3>
-        <p class="chart-sub">Ce qu’ils veulent en premier</p>
-        <div class="chart-box"><canvas id="chartPriorite"></canvas></div>
+        <h3>Q · Qui décide d’acheter un système d’accès ?</h3>
+        <p class="chart-sub">Décideur d’achat</p>
+        <div class="chart-box"><canvas id="chartDecideur"></canvas></div>
+      </div>
+    </div>
+
+    <h2 class="dash-section">2 · Accès aujourd’hui</h2>
+    <div class="charts">
+      <div class="card">
+        <h3>Q · Quel moyen d’accès utilisez-vous actuellement ?</h3>
+        <p class="chart-sub">Clés, badges, codes…</p>
+        <div class="chart-box"><canvas id="chartMoyens"></canvas></div>
       </div>
       <div class="card">
-        <h3>Qui doit ouvrir</h3>
-        <p class="chart-sub">Qui doit pouvoir passer la porte</p>
-        <div class="chart-box"><canvas id="chartQui"></canvas></div>
+        <h3>Q · Connaissez-vous ces solutions existantes ?</h3>
+        <p class="chart-sub">ZKTeco, Hikvision…</p>
+        <div class="chart-box"><canvas id="chartConcurrents"></canvas></div>
       </div>
+      <div class="card">
+        <h3>Q · Quel est votre principal problème d’accès ?</h3>
+        <p class="chart-sub">Douleurs citées</p>
+        <div class="chart-box"><canvas id="chartDouleurs"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Problèmes — vue radar</h3>
+        <p class="chart-sub">Comparaison des douleurs</p>
+        <div class="chart-box"><canvas id="chartDouleursRadar"></canvas></div>
+      </div>
+    </div>
 
+    <h2 class="dash-section">3 · EmpreintePro</h2>
+    <div class="charts">
+      <div class="card">
+        <h3>Q · Ça vous parle ?</h3>
+        <p class="chart-sub">Oui · Selon le prix · Non</p>
+        <div class="chart-box"><canvas id="chartInteret"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Q · Quelle suite vous intéresse ?</h3>
+        <p class="chart-sub">Essai, démo, peut-être…</p>
+        <div class="chart-box"><canvas id="chartPilote"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Q · Qu’est-ce qui vous freinerait le plus ?</h3>
+        <p class="chart-sub">Freins cités</p>
+        <div class="chart-box"><canvas id="chartFreins"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Freins — vue radar</h3>
+        <p class="chart-sub">Comparaison des freins</p>
+        <div class="chart-box"><canvas id="chartFreinsRadar"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Q · Quels tarifs vous semblent-ils convenables pour l’installation ?</h3>
+        <p class="chart-sub">Hors abonnement · plusieurs choix possibles</p>
+        <div class="chart-box"><canvas id="chartBudget"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Q · Comment préférez-vous payer l’abonnement à la plateforme ?</h3>
+        <p class="chart-sub">Par mois · semestre · an</p>
+        <div class="chart-box"><canvas id="chartAbonnement"></canvas></div>
+      </div>
+    </div>
+
+    <h2 class="dash-section">Contacts & fiches</h2>
+    <div class="charts">
       <div class="card wide">
         <h3>Leads chauds</h3>
-        <p class="chart-sub">« Oui clairement » ou prêts à essayer chez eux — clique une ligne pour le résumé</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Contact</th>
-              <th>Organisation</th>
-              <th>Zone</th>
-              <th>Intérêt</th>
-              <th>Suite</th>
-              <th>Commentaire</th>
-            </tr>
-          </thead>
-          <tbody id="leadRows"></tbody>
-        </table>
+        <p class="chart-sub">« Oui » ou prêts à essayer chez eux — clique une ligne</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Organisation</th>
+                <th>Zone</th>
+                <th>Intérêt</th>
+                <th>Suite</th>
+                <th>Commentaire</th>
+              </tr>
+            </thead>
+            <tbody id="leadRows"></tbody>
+          </table>
+        </div>
       </div>
 
       <div class="card wide">
         <h3>Toutes les réponses</h3>
-        <p class="chart-sub">Clique une personne pour voir son avis complet</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Contact</th>
-              <th>Organisation</th>
-              <th>Zone</th>
-              <th>Intérêt</th>
-              <th>Pilote</th>
-              <th>Commentaire</th>
-            </tr>
-          </thead>
-          <tbody id="allRows"></tbody>
-        </table>
+        <p class="chart-sub">Clique une personne pour le résumé complet</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Contact</th>
+                <th>Organisation</th>
+                <th>Zone</th>
+                <th>Intérêt</th>
+                <th>Pilote</th>
+                <th>Commentaire</th>
+              </tr>
+            </thead>
+            <tbody id="allRows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </main>

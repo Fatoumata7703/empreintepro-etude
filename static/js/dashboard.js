@@ -1,44 +1,56 @@
-/* Bleus différenciés + turquoise / indigo / magenta (bleu-rouge). */
+/* Bleus différenciés + turquoise / indigo / magenta. */
 const palette = [
-  "#1e3a8a", // navy
-  "#0891b2", // turquoise
-  "#2563eb", // bleu vif
-  "#7c3aed", // indigo-violet
-  "#db2777", // bleu-rouge / magenta
-  "#0f766e", // teal
-  "#0284c7", // ciel
-  "#4f46e5", // indigo
-  "#0369a1", // cyan profond
-  "#9333ea", // violet
-  "#1d4ed8", // royal
-  "#155e75", // pétrole
+  "#1e3a8a",
+  "#0891b2",
+  "#2563eb",
+  "#7c3aed",
+  "#db2777",
+  "#0f766e",
+  "#0284c7",
+  "#4f46e5",
+  "#0369a1",
+  "#9333ea",
+  "#1d4ed8",
+  "#155e75",
 ];
 
-/* Décalage de couleur par graphique → chaque carte n’a pas le même bleu dominant. */
 const chartColorOffset = {
   chartInteret: 0,
   chartOrgs: 3,
   chartMoyens: 1,
   chartDouleurs: 4,
   chartFreins: 6,
+  chartFreinsRadar: 6,
+  chartDouleursRadar: 4,
   chartConcurrents: 2,
   chartBudget: 5,
-  chartUrgence: 7,
   chartDecideur: 8,
-  chartAilleurs: 9,
   chartAbonnement: 10,
   chartPilote: 11,
   chartZone: 1,
-  chartTaille: 3,
   chartRole: 6,
   chartPortes: 9,
   chartPriorite: 4,
-  chartQui: 7,
+  chartFunnel: 0,
+  chartTimeline: 0,
+  chartInterestTrend: 2,
 };
+
+const chartRegistry = {};
 
 function colorsFor(id, count) {
   const offset = chartColorOffset[id] || 0;
   return Array.from({ length: count }, (_, i) => palette[(i + offset) % palette.length]);
+}
+
+function withAlpha(hex, alpha) {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const n = parseInt(full, 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function chartOptions(extra = {}) {
@@ -54,17 +66,21 @@ function chartOptions(extra = {}) {
           padding: 10,
           font: { family: "Inter", size: 11 },
           color: "#334155",
-          // Toujours afficher toutes les catégories (même à 0).
           filter: () => true,
         },
       },
       tooltip: {
         callbacks: {
           label(ctx) {
-            const total = ctx.dataset.data.reduce((a, b) => a + Number(b || 0), 0) || 1;
+            const data = ctx.dataset.data || [];
+            const total = data.reduce((a, b) => a + Number(b || 0), 0) || 1;
             const n = Number(ctx.raw || 0);
             const pct = Math.round((n / total) * 100);
-            return ` ${ctx.label} : ${n} réponse${n > 1 ? "s" : ""} (${pct} %)`;
+            const name = ctx.dataset.label ? `${ctx.dataset.label} — ` : "";
+            if (ctx.chart.config.type === "line") {
+              return ` ${name}${ctx.label || ""} : ${n}`;
+            }
+            return ` ${name}${ctx.label || ""} : ${n} (${pct} %)`;
           },
         },
       },
@@ -86,24 +102,39 @@ function setHint(canvasId, text) {
   hint.textContent = text || "";
 }
 
-function doughnut(id, data, emptyText = "Aucune réponse pour ce graphique.") {
+function destroyChart(id) {
+  if (chartRegistry[id]) {
+    chartRegistry[id].destroy();
+    delete chartRegistry[id];
+  }
+}
+
+function makeChart(id, config) {
   const ctx = document.getElementById(id);
-  if (!ctx) return;
-  const labels = data.labels || [];
-  const values = (data.values || []).map((v) => Number(v || 0));
+  if (!ctx) return null;
+  destroyChart(id);
+  chartRegistry[id] = new Chart(ctx, config);
+  return chartRegistry[id];
+}
+
+function nonempty(data) {
+  const labels = data?.labels || [];
+  const values = (data?.values || []).map((v) => Number(v || 0));
+  return { labels, values, total: values.reduce((a, b) => a + b, 0) };
+}
+
+function doughnut(id, data, emptyText = "Aucune réponse pour ce graphique.") {
+  const { labels, values, total } = nonempty(data);
   if (!labels.length) {
     setHint(id, emptyText);
     return;
   }
-  const total = values.reduce((a, b) => a + b, 0);
-  if (!total) {
-    setHint(id, emptyText);
-  } else {
+  if (!total) setHint(id, emptyText);
+  else {
     const topIdx = values.indexOf(Math.max(...values));
     setHint(id, total === 1 ? `Réponse : ${labels[topIdx]}` : `Dominant : ${labels[topIdx]} (${values[topIdx]}/${total})`);
   }
-  // Toutes les cases de légende restent visibles, y compris les 0.
-  new Chart(ctx, {
+  makeChart(id, {
     type: "doughnut",
     data: {
       labels,
@@ -112,29 +143,65 @@ function doughnut(id, data, emptyText = "Aucune réponse pour ce graphique.") {
         backgroundColor: colorsFor(id, labels.length),
         borderWidth: 2,
         borderColor: "#fff",
+        hoverOffset: 6,
       }],
     },
-    options: chartOptions(),
+    options: chartOptions({ cutout: "58%" }),
   });
 }
 
-function bars(id, data, emptyText = "Aucune réponse pour ce graphique.") {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  const labels = data.labels || [];
-  const values = (data.values || []).map((v) => Number(v || 0));
+function polar(id, data, emptyText = "Aucune réponse pour ce graphique.") {
+  const { labels, values, total } = nonempty(data);
+  if (!labels.length || !total) {
+    setHint(id, emptyText);
+    return;
+  }
+  const topIdx = values.indexOf(Math.max(...values));
+  setHint(id, `Dominant : ${labels[topIdx]} (${values[topIdx]})`);
+  makeChart(id, {
+    type: "polarArea",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colorsFor(id, labels.length).map((c) => withAlpha(c, 0.72)),
+        borderWidth: 1,
+        borderColor: "#fff",
+      }],
+    },
+    options: chartOptions({
+      scales: {
+        r: {
+          beginAtZero: true,
+          ticks: { precision: 0, backdrop: false, color: "#94a3b8" },
+          grid: { color: "#e2e8f0" },
+        },
+      },
+    }),
+  });
+}
+
+function bars(id, data, { horizontal = false, emptyText = "Aucune réponse pour ce graphique." } = {}) {
+  const { labels, values, total } = nonempty(data);
   if (!labels.length) {
     setHint(id, emptyText);
     return;
   }
-  const total = values.reduce((a, b) => a + b, 0);
-  if (!total) {
-    setHint(id, emptyText);
-  } else {
+  if (!total) setHint(id, emptyText);
+  else {
     const topIdx = values.indexOf(Math.max(...values));
     setHint(id, `Plus cité : ${labels[topIdx]} (${values[topIdx]})`);
   }
-  new Chart(ctx, {
+  const axis = {
+    ticks: { font: { family: "Inter", size: 10 }, color: "#475569", maxRotation: horizontal ? 0 : 45 },
+    grid: { display: false },
+  };
+  const valueAxis = {
+    beginAtZero: true,
+    ticks: { precision: 0, color: "#64748b" },
+    grid: { color: "#f1f5f9" },
+  };
+  makeChart(id, {
     type: "bar",
     data: {
       labels,
@@ -142,14 +209,230 @@ function bars(id, data, emptyText = "Aucune réponse pour ce graphique.") {
         data: values,
         backgroundColor: colorsFor(id, labels.length),
         borderRadius: 8,
-        maxBarThickness: 28,
+        maxBarThickness: horizontal ? 22 : 36,
+      }],
+    },
+    options: chartOptions({
+      indexAxis: horizontal ? "y" : "x",
+      plugins: { legend: { display: false } },
+      scales: horizontal
+        ? { x: valueAxis, y: axis }
+        : { x: axis, y: valueAxis },
+    }),
+  });
+}
+
+function radar(id, data, emptyText = "Aucune réponse pour ce graphique.") {
+  const { labels, values, total } = nonempty(data);
+  if (!labels.length || !total) {
+    setHint(id, emptyText);
+    return;
+  }
+  const color = palette[chartColorOffset[id] || 0];
+  setHint(id, `Total mentions : ${total}`);
+  makeChart(id, {
+    type: "radar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Mentions",
+        data: values,
+        backgroundColor: withAlpha(color, 0.22),
+        borderColor: color,
+        borderWidth: 2,
+        pointBackgroundColor: color,
+        pointRadius: 3,
       }],
     },
     options: chartOptions({
       plugins: { legend: { display: false } },
       scales: {
-        x: { ticks: { font: { family: "Inter", size: 10 }, color: "#475569", maxRotation: 45 }, grid: { display: false } },
-        y: { beginAtZero: true, ticks: { precision: 0, color: "#64748b" }, grid: { color: "#f1f5f9" } },
+        r: {
+          beginAtZero: true,
+          ticks: { precision: 0, backdrop: false, color: "#94a3b8" },
+          grid: { color: "#e2e8f0" },
+          pointLabels: { font: { family: "Inter", size: 10 }, color: "#334155" },
+        },
+      },
+    }),
+  });
+}
+
+function timeline(id, data) {
+  const labels = data?.labels || [];
+  if (!labels.length) {
+    setHint(id, "Pas encore assez de dates pour tracer une courbe.");
+    return;
+  }
+  const last = labels[labels.length - 1];
+  const cum = data.cumulative || [];
+  setHint(id, `${cum[cum.length - 1] || 0} réponses cumulées · dernier jour : ${last}`);
+  makeChart(id, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Cumul",
+          data: data.cumulative || [],
+          borderColor: "#1e3a8a",
+          backgroundColor: withAlpha("#1e3a8a", 0.12),
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          yAxisID: "y",
+        },
+        {
+          label: "Par jour",
+          data: data.daily || [],
+          borderColor: "#0891b2",
+          backgroundColor: withAlpha("#0891b2", 0.15),
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 3,
+          yAxisID: "y1",
+        },
+      ],
+    },
+    options: chartOptions({
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        x: {
+          ticks: { font: { family: "Inter", size: 10 }, color: "#64748b", maxRotation: 40 },
+          grid: { color: "#f1f5f9" },
+        },
+        y: {
+          beginAtZero: true,
+          position: "left",
+          title: { display: true, text: "Cumul", color: "#64748b", font: { size: 11 } },
+          ticks: { precision: 0, color: "#64748b" },
+          grid: { color: "#f1f5f9" },
+        },
+        y1: {
+          beginAtZero: true,
+          position: "right",
+          title: { display: true, text: "Par jour", color: "#64748b", font: { size: 11 } },
+          ticks: { precision: 0, color: "#64748b" },
+          grid: { drawOnChartArea: false },
+        },
+      },
+    }),
+  });
+}
+
+function interestTrend(id, data) {
+  const labels = data?.labels || [];
+  if (!labels.length) {
+    setHint(id, "Pas encore assez de dates pour tracer l’intérêt.");
+    return;
+  }
+  setHint(id, "Évolution quotidienne de l’intérêt");
+  makeChart(id, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Oui",
+          data: data.oui || [],
+          borderColor: "#16a34a",
+          backgroundColor: withAlpha("#16a34a", 0.12),
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.2,
+          pointRadius: 3,
+        },
+        {
+          label: "Selon le prix",
+          data: data.peut || [],
+          borderColor: "#d97706",
+          backgroundColor: withAlpha("#d97706", 0.1),
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.2,
+          pointRadius: 3,
+        },
+        {
+          label: "Non",
+          data: data.non || [],
+          borderColor: "#dc2626",
+          backgroundColor: withAlpha("#dc2626", 0.08),
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.2,
+          pointRadius: 3,
+        },
+      ],
+    },
+    options: chartOptions({
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        x: {
+          ticks: { font: { family: "Inter", size: 10 }, color: "#64748b", maxRotation: 40 },
+          grid: { color: "#f1f5f9" },
+        },
+        y: {
+          beginAtZero: true,
+          stacked: false,
+          ticks: { precision: 0, color: "#64748b" },
+          grid: { color: "#f1f5f9" },
+        },
+      },
+    }),
+  });
+}
+
+function funnel(id, data) {
+  const { labels, values, total } = nonempty(data);
+  if (!labels.length || !total) {
+    setHint(id, "Pas encore de funnel à afficher.");
+    return;
+  }
+  const base = values[0] || 1;
+  setHint(id, `Conversion finale : ${Math.round((values[values.length - 1] / base) * 100)} % des réponses → essai`);
+  makeChart(id, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          withAlpha("#1e3a8a", 0.95),
+          withAlpha("#2563eb", 0.9),
+          withAlpha("#0891b2", 0.9),
+          withAlpha("#16a34a", 0.9),
+        ],
+        borderRadius: 10,
+        maxBarThickness: 42,
+      }],
+    },
+    options: chartOptions({
+      indexAxis: "y",
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label(ctx) {
+              const n = Number(ctx.raw || 0);
+              const pct = Math.round((n / base) * 100);
+              return ` ${n} (${pct} % du sommet)`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { precision: 0, color: "#64748b" },
+          grid: { color: "#f1f5f9" },
+        },
+        y: {
+          ticks: { font: { family: "Inter", size: 12 }, color: "#334155" },
+          grid: { display: false },
+        },
       },
     }),
   });
@@ -228,7 +511,7 @@ function fillTable(id, rows) {
     .map((row) => {
       peopleById[row.id] = row;
       const who = row.nom || row.tel ? `${row.nom || "—"}<div class="hint">${row.tel || ""}</div>` : "Anonyme";
-      const preview = (row.fin || row.incident || "Cliquer pour le résumé complet");
+      const preview = row.fin || row.incident || "Cliquer pour le résumé complet";
       return `<tr class="click-row" tabindex="0" data-id="${row.id}" title="Voir le résumé">
         <td>${who}</td>
         <td>${row.org_type}</td>
@@ -263,29 +546,33 @@ async function loadStats() {
   document.getElementById("kpiYes").textContent = `${data.pct_yes} %`;
   document.getElementById("kpiWarm").textContent = `${data.pct_warm} %`;
   document.getElementById("kpiPilot").textContent = data.pilot_open;
+  document.getElementById("kpiContact").textContent = data.with_contact;
+  document.getElementById("kpiContactPct").textContent = `${data.pct_contact || 0} %`;
   document.getElementById("kpiYesHint").textContent = `${data.interest_yes} « Oui » seulement`;
   document.getElementById("kpiWarmHint").textContent = `${data.interest_maybe} « Oui » + « Selon le prix »`;
   document.getElementById("kpiPilotHint").textContent = "uniquement « essayer chez moi » (pas la démo)";
-  document.getElementById("kpiContact").textContent = data.with_contact;
+
+  timeline("chartTimeline", data.timeline);
+  interestTrend("chartInterestTrend", data.timeline);
+  funnel("chartFunnel", data.funnel);
+
+  doughnut("chartRole", data.charts.role);
+  polar("chartOrgs", data.charts.org_type);
+  bars("chartZone", data.charts.zone, { horizontal: true });
+  doughnut("chartPortes", data.charts.portes);
+  doughnut("chartDecideur", data.charts.decideur);
+
+  bars("chartMoyens", data.charts.moyens, { horizontal: true });
+  bars("chartConcurrents", data.charts.concurrents, { horizontal: true });
+  bars("chartDouleurs", data.charts.douleurs);
+  radar("chartDouleursRadar", data.charts.douleurs);
 
   doughnut("chartInteret", data.charts.interet);
-  doughnut("chartOrgs", data.charts.org_type);
-  bars("chartMoyens", data.charts.moyens);
-  bars("chartDouleurs", data.charts.douleurs);
-  bars("chartFreins", data.charts.freins);
-  bars("chartConcurrents", data.charts.concurrents);
-  doughnut("chartBudget", data.charts.budget);
-  doughnut("chartUrgence", data.charts.urgence);
-  doughnut("chartDecideur", data.charts.decideur);
-  doughnut("chartAilleurs", data.charts.ailleurs);
-  doughnut("chartAbonnement", data.charts.abonnement);
   doughnut("chartPilote", data.charts.pilote);
-  bars("chartZone", data.charts.zone);
-  doughnut("chartTaille", data.charts.taille);
-  doughnut("chartRole", data.charts.role);
-  doughnut("chartPortes", data.charts.portes);
-  doughnut("chartPriorite", data.charts.priorite);
-  bars("chartQui", data.charts.qui);
+  bars("chartFreins", data.charts.freins, { horizontal: true });
+  radar("chartFreinsRadar", data.charts.freins);
+  bars("chartBudget", data.charts.budget);
+  doughnut("chartAbonnement", data.charts.abonnement);
 
   fillTable("leadRows", data.leads);
   fillTable("allRows", data.recent);
