@@ -7,13 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" href="{{ url_for('static', filename='img/logo-empreintepro.png') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-mark.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/etude.css') }}" />
 </head>
 <body class="dash rapport">
   <header class="dash-bar no-print">
     <a class="brand" href="{{ url_for('etude_rapport') }}">
-      <img class="logo-full" src="{{ url_for('static', filename='img/logo-empreintepro.png') }}" alt="EmpreintePro">
+      <img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="">
+      <span>EmpreintePro</span>
     </a>
     <div class="btn-row">
       <a class="ghost" href="{{ url_for('etude_dashboard') }}">Dashboard</a>

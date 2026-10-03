@@ -49,8 +49,7 @@ a:hover { text-decoration: underline; }
 .hero-top { margin-bottom: 1.6rem; }
 
 .brand { display: flex; align-items: center; gap: 0.7rem; }
-.brand img { height: 40px; width: auto; display: block; border-radius: 0; object-fit: contain; }
-.brand img.logo-full { height: 42px; width: auto; max-width: min(240px, 70vw); }
+.brand img { height: 44px; width: auto; display: block; }
 .brand span { font-weight: 700; letter-spacing: -0.03em; font-size: 1.05rem; color: inherit; }
 
 .meta {
