@@ -23,21 +23,21 @@
 
       <div class="form-intro">
         <p><strong>Pourquoi ce questionnaire ?</strong>
-          On prépare EmpreintePro : un système pour savoir <em>qui</em> entre, <em>quand</em>, et si le droit d’accès est encore valide — bureau, commerce ou maison à Dakar. Votre avis nous aide à construire quelque chose d’utile ici, pas un gadget importé.</p>
+          On prépare EmpreintePro : une serrure qui ouvre avec le doigt, et un site internet pour gérer qui a le droit d’entrer. Le but : savoir <em>qui</em> est passé, <em>quand</em>, et pouvoir retirer un droit facilement — pour un bureau, un commerce ou une maison à Dakar.</p>
         <p><strong>Ce qu’on attend de vous</strong>
-          Des réponses simples et sincères sur votre façon d’ouvrir aujourd’hui (clés, badges, codes…), ce qui vous gêne, et si une solution par empreinte + plateforme vous intéresse. Pas de bonne ou mauvaise réponse.</p>
+          Votre façon d’ouvrir aujourd’hui (clés, badges, codes…), ce qui vous embête, et si cette idée vous intéresse. Pas de bonne ou mauvaise réponse — on veut comprendre la réalité du terrain.</p>
         <p><strong>Comment répondre (même sans être informaticien)</strong>
-          Lisez chaque question comme une conversation. Cochez ce qui vous ressemble — plusieurs cases si besoin. Si vous ne savez pas, choisissez « Je ne sais pas » ou passez. Le nom et WhatsApp sont optionnels. Aucune connaissance technique n’est demandée.</p>
+          Répondez comme à l’oral. Cochez ce qui vous ressemble. Si un mot ou une marque ne vous dit rien, choisissez « Je ne sais pas » ou « Aucune ». Le nom et WhatsApp sont facultatifs. Aucun jargon technique n’est exigé.</p>
       </div>
 
       <form id="surveyForm">
         <p class="error-box" id="surveyError"></p>
 
         <section class="block">
-          <div class="sec-head"><span class="num">1</span><h2>Profil</h2></div>
+          <div class="sec-head"><span class="num">1</span><h2>Qui êtes-vous ?</h2></div>
 
           <div class="q">
-            <span class="label">Rôle</span>
+            <span class="label">Vous êtes…</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="role" value="dirigeant"> Dirigeant / gérant</label>
               <label class="opt"><input type="radio" name="role" value="proprio"> Propriétaire / particulier</label>
@@ -48,7 +48,7 @@
           </div>
 
           <div class="q">
-            <span class="label">Site</span>
+            <span class="label">Pour quel type de lieu ?</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="type" value="pme"> PME / bureau</label>
               <label class="opt"><input type="radio" name="type" value="commerce"> Commerce</label>
@@ -60,7 +60,7 @@
 
           <div class="row">
             <div class="q">
-              <label class="label" for="zone">Zone</label>
+              <label class="label" for="zone">Où se trouve le lieu ?</label>
               <select id="zone" name="zone">
                 <option value="">Choisir</option>
                 <option>Plateau</option>
@@ -75,7 +75,7 @@
               </select>
             </div>
             <div class="q">
-              <label class="label" for="portes">Nombre de portes</label>
+              <label class="label" for="portes">Combien de portes à contrôler ?</label>
               <select id="portes" name="portes">
                 <option value="">Choisir</option>
                 <option>1</option>
@@ -88,45 +88,46 @@
         </section>
 
         <section class="block">
-          <div class="sec-head"><span class="num">2</span><h2>Comment gérez-vous l’accès aujourd’hui ?</h2></div>
+          <div class="sec-head"><span class="num">2</span><h2>Comment on ouvre chez vous aujourd’hui ?</h2></div>
 
           <div class="q">
-            <span class="label">Quel moyen d’accès utilisez-vous actuellement ?</span>
+            <span class="label">Aujourd’hui, comment les gens entrent-ils ?</span>
             <div class="choices two">
               <label class="opt"><input type="checkbox" name="moyen" value="cles"> Clés</label>
-              <label class="opt"><input type="checkbox" name="moyen" value="badges"> Badges</label>
-              <label class="opt"><input type="checkbox" name="moyen" value="codes"> Codes</label>
-              <label class="opt"><input type="checkbox" name="moyen" value="vigile"> Vigile</label>
-              <label class="opt"><input type="checkbox" name="moyen" value="empreinte"> Empreinte déjà</label>
-              <label class="opt"><input type="checkbox" name="moyen" value="rien"> Rien de formalisé</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="badges"> Badges / cartes</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="codes"> Codes (digicode)</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="vigile"> Vigile / gardien</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="empreinte"> Déjà avec le doigt (empreinte)</label>
+              <label class="opt"><input type="checkbox" name="moyen" value="rien"> Rien de précis</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Connaissez-vous ces solutions existantes ?</span>
+            <span class="label">Avez-vous déjà entendu parler de ces marques ?</span>
+            <p class="hint-soft">Ce sont des marques de pointeuses / serrures à empreinte. Si aucune ne vous dit rien, cochez « Aucune ».</p>
             <div class="choices two">
               <label class="opt"><input type="checkbox" name="concurrent" value="zkteco"> ZKTeco</label>
               <label class="opt"><input type="checkbox" name="concurrent" value="hikvision"> Hikvision</label>
               <label class="opt"><input type="checkbox" name="concurrent" value="suprema"> Suprema</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="local"> Installateur / marque locale</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="local"> Un installateur / marque locale</label>
               <label class="opt"><input type="checkbox" name="concurrent" value="autre"> Autre</label>
-              <label class="opt"><input type="checkbox" name="concurrent" value="aucun"> Aucune en particulier</label>
+              <label class="opt"><input type="checkbox" name="concurrent" value="aucun"> Aucune — je ne connais pas</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Quel est votre principal problème d’accès ?</span>
+            <span class="label">Qu’est-ce qui vous embête le plus avec l’entrée ?</span>
             <div class="choices">
-              <label class="opt"><input type="checkbox" name="douleur" value="pertes"> Clés / badges perdus ou prêtés</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="trace"> Pas de traçabilité</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="depart"> Accès non retiré au départ</label>
-              <label class="opt"><input type="checkbox" name="douleur" value="temps"> Trop lent à gérer</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="pertes"> Clés ou badges perdus / prêtés</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="trace"> On ne sait pas qui est entré ni quand</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="depart"> Une personne partie peut encore entrer</label>
+              <label class="opt"><input type="checkbox" name="douleur" value="temps"> Trop long à gérer</label>
               <label class="opt"><input type="checkbox" name="douleur" value="rien"> Pas de problème</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Qui décide d’acheter un système d’accès ?</span>
+            <span class="label">Qui déciderait d’acheter un tel système ?</span>
             <div class="choices two">
               <label class="opt"><input type="radio" name="decideur" value="moi"> Moi</label>
               <label class="opt"><input type="radio" name="decideur" value="associe"> Associé / famille</label>
@@ -140,7 +141,7 @@
           <div class="sec-head"><span class="num">3</span><h2>EmpreintePro vous intéresse-t-il ?</h2></div>
 
           <div class="pitch pitch-short">
-            <p>EmpreintePro est un système intégré : une serrure à empreinte sur votre porte, reliée à une plateforme web. Vous posez le doigt : on ouvre ou on refuse. Sur la plateforme, vous enrôlez une personne, vous changez ou retirez un accès, et vous voyez l’historique. Sans la plateforme, pas d’enrôlement ni de gestion des droits à distance.</p>
+            <p>EmpreintePro, c’est simple : une serrure sur la porte qui reconnaît votre doigt. Elle est reliée à un site internet. Sur ce site, vous ajoutez quelqu’un, vous lui retirez le droit d’entrer, et vous voyez qui est passé. Sans ce site, on ne peut pas gérer les personnes à distance.</p>
           </div>
 
           <div class="q">
@@ -153,60 +154,62 @@
           </div>
 
           <div class="q">
-            <span class="label">Qu’est-ce qui vous freinerait le plus ?</span>
+            <span class="label">Qu’est-ce qui vous ferait hésiter le plus ?</span>
             <div class="choices two">
-              <label class="opt"><input type="checkbox" name="frein" value="prix"> Prix</label>
-              <label class="opt"><input type="checkbox" name="frein" value="confiance"> Données biométriques</label>
-              <label class="opt"><input type="checkbox" name="frein" value="panne"> Panne / porte bloquée</label>
-              <label class="opt"><input type="checkbox" name="frein" value="complexe"> Complexe</label>
-              <label class="opt"><input type="checkbox" name="frein" value="existant"> Déjà équipé</label>
+              <label class="opt"><input type="checkbox" name="frein" value="prix"> Le prix</label>
+              <label class="opt"><input type="checkbox" name="frein" value="confiance"> Enregistrer mon empreinte (mon doigt) dans un système</label>
+              <label class="opt"><input type="checkbox" name="frein" value="panne"> Peur que la porte reste bloquée</label>
+              <label class="opt"><input type="checkbox" name="frein" value="complexe"> Trop compliqué à utiliser</label>
+              <label class="opt"><input type="checkbox" name="frein" value="existant"> J’ai déjà un système</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Quels tarifs vous semblent-ils convenables pour l’installation ? (hors abonnement)</span>
+            <span class="label">Quel prix pour poser le matériel vous semble acceptable ?</span>
+            <p class="hint-soft">C’est le paiement une seule fois pour la serrure et la pose — pas le paiement mensuel du site.</p>
             <div class="choices two">
-              <label class="opt"><input type="checkbox" name="budget" value="lt100"> &lt; 100k</label>
-              <label class="opt"><input type="checkbox" name="budget" value="100_300"> 100–300k</label>
-              <label class="opt"><input type="checkbox" name="budget" value="300_500"> 300–500k</label>
-              <label class="opt"><input type="checkbox" name="budget" value="plus500"> &gt; 500k</label>
+              <label class="opt"><input type="checkbox" name="budget" value="lt100"> Moins de 100 000 F</label>
+              <label class="opt"><input type="checkbox" name="budget" value="100_300"> 100 000 à 300 000 F</label>
+              <label class="opt"><input type="checkbox" name="budget" value="300_500"> 300 000 à 500 000 F</label>
+              <label class="opt"><input type="checkbox" name="budget" value="plus500"> Plus de 500 000 F</label>
               <label class="opt"><input type="checkbox" name="budget" value="nsp"> Je ne sais pas</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Comment préférez-vous payer l’abonnement à la plateforme ?</span>
+            <span class="label">Comment préférez-vous payer le service du site internet ?</span>
+            <p class="hint-soft">C’est le petit paiement régulier pour gérer les accès en ligne (ajouter / retirer une personne, voir l’historique).</p>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="abonnement" value="mois"> Par mois</label>
-              <label class="opt"><input type="radio" name="abonnement" value="semestre"> Par semestre</label>
-              <label class="opt"><input type="radio" name="abonnement" value="an"> Par an</label>
+              <label class="opt"><input type="radio" name="abonnement" value="mois"> Chaque mois</label>
+              <label class="opt"><input type="radio" name="abonnement" value="semestre"> Tous les 6 mois</label>
+              <label class="opt"><input type="radio" name="abonnement" value="an"> Une fois par an</label>
             </div>
           </div>
 
           <div class="q">
-            <span class="label">Quelle suite vous intéresse ?</span>
+            <span class="label">Ensuite, que souhaitez-vous ?</span>
             <div class="choices two">
-              <label class="opt"><input type="radio" name="pilote" value="ouvert"> Essai chez moi</label>
-              <label class="opt"><input type="radio" name="pilote" value="voir"> Démo d’abord</label>
-              <label class="opt"><input type="radio" name="pilote" value="budget"> Peut-être</label>
-              <label class="opt"><input type="radio" name="pilote" value="non"> Pas maintenant</label>
+              <label class="opt"><input type="radio" name="pilote" value="ouvert"> Essayer chez moi</label>
+              <label class="opt"><input type="radio" name="pilote" value="voir"> Voir d’abord une démonstration</label>
+              <label class="opt"><input type="radio" name="pilote" value="budget"> Peut-être plus tard</label>
+              <label class="opt"><input type="radio" name="pilote" value="non"> Pas pour le moment</label>
             </div>
           </div>
 
           <div class="row">
             <div class="q">
-              <label class="label" for="nom">Nom (optionnel)</label>
+              <label class="label" for="nom">Nom (facultatif)</label>
               <input type="text" id="nom" name="nom" placeholder="Prénom">
             </div>
             <div class="q">
-              <label class="label" for="tel">WhatsApp (optionnel)</label>
+              <label class="label" for="tel">WhatsApp (facultatif)</label>
               <input type="tel" id="tel" name="tel" placeholder="Téléphone">
             </div>
           </div>
 
           <div class="q">
-            <label class="label" for="fin">Mot libre (optionnel)</label>
-            <textarea id="fin" name="fin" rows="2" placeholder="Ex. coupures de courant…"></textarea>
+            <label class="label" for="fin">Un mot libre (facultatif)</label>
+            <textarea id="fin" name="fin" rows="2" placeholder="Ex. coupures de courant, questions…"></textarea>
           </div>
         </section>
 
