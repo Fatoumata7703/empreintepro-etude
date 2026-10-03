@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="EmpreintePro">
+  <defs>
+    <linearGradient id="bg" x1="20" y1="8" x2="108" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <clipPath id="eClip">
+      <!-- Lowercase e solid, complete -->
+      <path d="M38 66c0-16.5 13.2-30 30-30s30 13.5 30 30c0 17-13.2 31-30 31-12.2 0-22.6-6.4-27.4-15.8l10.2-5.6c3.2 6.2 9.6 10.2 17.2 10.2 10.4 0 18.8-8.4 18.8-19.8H38zm12.2-8.5h35.6c-1.4-9.2-9-16-17.8-16s-16.4 6.8-17.8 16z"/>
+    </clipPath>
+  </defs>
+
+  <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#bg)"/>
+
+  <!-- White e base (complete letter) -->
+  <path fill="#F8FAFC"
+    d="M38 66c0-16.5 13.2-30 30-30s30 13.5 30 30c0 17-13.2 31-30 31-12.2 0-22.6-6.4-27.4-15.8l10.2-5.6c3.2 6.2 9.6 10.2 17.2 10.2 10.4 0 18.8-8.4 18.8-19.8H38zm12.2-8.5h35.6c-1.4-9.2-9-16-17.8-16s-16.4 6.8-17.8 16z"/>
+
+  <!-- Fingerprint ridges clipped inside the e -->
+  <g clip-path="url(#eClip)" fill="none" stroke="#93C5FD" stroke-linecap="round" stroke-width="2.2" opacity="0.95">
+    <path d="M48 52c8-8 24-8 32 0"/>
+    <path d="M44 58c10-10 30-10 40 0"/>
+    <path d="M42 64c12-10 32-10 44 0"/>
+    <path d="M42 70c12-8 32-8 44 0"/>
+    <path d="M44 76c10-8 30-8 40 0"/>
+    <path d="M48 82c8-6 24-6 32 0"/>
+    <path d="M54 88c6-4 16-4 22 0"/>
+    <path d="M58 54c4-6 12-6 16 0"/>
+    <path d="M56 60c6-6 14-6 20 0"/>
+    <path d="M56 66c6-5 14-5 20 0"/>
+  </g>
+</svg>
