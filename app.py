@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, redirect, render_template, request, session, url_for
 
-from etude_db import export_rows, init_db, purge_auto_tests, save_response, stats
+from etude_db import delete_response, export_rows, init_db, purge_auto_tests, save_response, stats
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
@@ -146,6 +146,13 @@ def etude_export():
 def etude_purge_tests():
     removed = purge_auto_tests()
     return jsonify({"ok": True, "removed": removed})
+
+
+@app.route("/api/reponses/<int:response_id>", methods=["DELETE"])
+@admin_required
+def etude_delete_response(response_id):
+    removed = delete_response(response_id)
+    return jsonify({"ok": True, "removed": bool(removed), "id": response_id})
 
 
 if __name__ == "__main__":

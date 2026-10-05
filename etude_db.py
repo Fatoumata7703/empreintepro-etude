@@ -326,6 +326,7 @@ def purge_auto_tests() -> int:
             DELETE FROM responses
             WHERE (nom = ? AND (fin = ? OR incident = ?))
                OR (nom = ? AND fin = ?)
+               OR (nom = ? AND fin LIKE ?)
             """,
             (
                 "Test Auto",
@@ -333,6 +334,8 @@ def purge_auto_tests() -> int:
                 "test connexion Auto",
                 "Test Branchement",
                 "verification formulaire-admin",
+                "Test Auto Cursor",
+                "Test enregistrement%",
             ),
         )
         conn.commit()
