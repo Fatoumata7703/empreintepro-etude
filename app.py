@@ -58,9 +58,23 @@ def etude_save():
     org_type = (data.get("org_type") or "").strip()
     interet = (data.get("interet") or "").strip()
     if not org_type or not interet:
-        return jsonify({"ok": False, "error": "Organisation et intérêt sont requis."}), 400
-    save_response(data)
-    return jsonify({"ok": True, "redirect": url_for("etude_merci")})
+        return jsonify({"ok": False, "error": "Indiquez le type de lieu et si EmpreintePro vous parle."}), 400
+    try:
+        new_id = save_response(data)
+    except Exception as exc:
+        app.logger.exception("Échec enregistrement questionnaire")
+        return jsonify({
+            "ok": False,
+            "error": "Enregistrement impossible pour le moment. Réessayez dans quelques secondes.",
+            "detail": str(exc)[:200],
+        }), 500
+    if not new_id:
+        return jsonify({"ok": False, "error": "Enregistrement sans numéro de réponse."}), 500
+    return jsonify({
+        "ok": True,
+        "id": new_id,
+        "redirect": url_for("etude_merci", n=new_id),
+    })
 
 
 @app.route("/admin", methods=["GET", "POST"])

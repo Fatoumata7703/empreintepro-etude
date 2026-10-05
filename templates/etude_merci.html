@@ -20,9 +20,9 @@
             <span>EmpreintePro</span>
           </div>
         </div>
-        <p class="kicker">Réponse enregistrée</p>
+        <p class="kicker">Réponse enregistrée{% if request.args.get('n') %} · n° {{ request.args.get('n') }}{% endif %}</p>
         <h1>Merci.</h1>
-        <p class="lead">Votre avis est dans l’étude. Si vous avez laissé un contact et que le sujet vous parle, on pourra revenir vers vous.</p>
+        <p class="lead">Votre avis est bien dans l’étude{% if request.args.get('n') %} (n° {{ request.args.get('n') }}){% endif %}. Si vous avez laissé un contact et que le sujet vous parle, on pourra revenir vers vous.</p>
         <div class="btn-row" style="margin-top:1.4rem;">
           <a class="ghost" href="{{ url_for('etude_docs') }}">Relire la documentation</a>
           <a class="btn" href="{{ url_for('etude_de_marche') }}">Nouvelle réponse</a>

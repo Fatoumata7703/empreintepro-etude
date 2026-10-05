@@ -175,6 +175,7 @@ def _pg_url() -> str:
 class _PgConn:
     def __init__(self, raw):
         self.raw = raw
+        self._closed = False
 
     def execute(self, sql, params=None):
         sql = sql.replace("?", "%s")
@@ -186,18 +187,25 @@ class _PgConn:
     def commit(self):
         self.raw.commit()
 
+    def rollback(self):
+        self.raw.rollback()
+
     def close(self):
-        self.raw.close()
+        if not self._closed:
+            self._closed = True
+            self.raw.close()
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc, tb):
-        if exc_type:
-            self.raw.rollback()
-        else:
-            self.raw.commit()
-        self.raw.close()
+        try:
+            if exc_type:
+                self.raw.rollback()
+            else:
+                self.raw.commit()
+        finally:
+            self.close()
 
 
 def connect():
@@ -205,7 +213,11 @@ def connect():
         import psycopg2
         import psycopg2.extras
 
-        raw = psycopg2.connect(_pg_url(), cursor_factory=psycopg2.extras.RealDictCursor)
+        raw = psycopg2.connect(
+            _pg_url(),
+            cursor_factory=psycopg2.extras.RealDictCursor,
+            connect_timeout=10,
+        )
         return _PgConn(raw)
 
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -455,29 +467,41 @@ def _person_card(row):
     }
 
 
+def _as_list(value):
+    if isinstance(value, list):
+        return value
+    if value is None or value == "":
+        return []
+    return [value]
+
+
 def save_response(payload):
+    """Enregistre une réponse et renvoie son id. Lève en cas d'échec."""
+    if os.environ.get("RENDER") and not _use_postgres():
+        raise RuntimeError("DATABASE_URL manquante sur Render — réponse non enregistrée.")
+
     now = datetime.now(timezone.utc).isoformat()
     values = (
         now,
-        payload.get("role") or "",
-        payload.get("org_type") or "",
+        (payload.get("role") or "").strip(),
+        (payload.get("org_type") or "").strip(),
         payload.get("taille") or "",
-        payload.get("zone") or "",
-        _dump(payload.get("moyens")),
+        (payload.get("zone") or "").strip(),
+        _dump(_as_list(payload.get("moyens"))),
         payload.get("portes") or "",
-        _dump(payload.get("douleurs")),
+        _dump(_as_list(payload.get("douleurs"))),
         (payload.get("incident") or "").strip(),
         payload.get("priorite") or "",
-        _dump(payload.get("qui")),
-        payload.get("interet") or "",
-        _dump(payload.get("freins")),
+        _dump(_as_list(payload.get("qui"))),
+        (payload.get("interet") or "").strip(),
+        _dump(_as_list(payload.get("freins"))),
         payload.get("pilote") or "",
         (payload.get("nom") or "").strip()[:120],
         (payload.get("tel") or "").strip()[:40],
         (payload.get("fin") or "").strip()[:800],
-        _dump(payload.get("concurrents")),
+        _dump(_as_list(payload.get("concurrents"))),
         payload.get("decideur") or "",
-        _dump(payload.get("budget")),
+        _dump(_as_list(payload.get("budget"))),
         payload.get("urgence") or "",
         payload.get("ailleurs") or "",
         payload.get("abonnement") or "",
@@ -498,8 +522,12 @@ def save_response(payload):
                 values,
             )
             row = cur.fetchone()
+            if not row:
+                raise RuntimeError("INSERT Postgres sans id retourné.")
+            new_id = int(row["id"] if isinstance(row, dict) else row[0])
+            # Commit explicite avant sortie du with (évite perte si close foire).
             conn.commit()
-            return int(row["id"] if isinstance(row, dict) else row[0])
+            return new_id
 
         cur = conn.execute(
             """
@@ -512,8 +540,22 @@ def save_response(payload):
             """,
             values,
         )
+        new_id = cur.lastrowid
+        if not new_id:
+            raise RuntimeError("INSERT SQLite sans id.")
         conn.commit()
-        return cur.lastrowid
+        return new_id
+
+
+def count_responses() -> int:
+    with connect() as conn:
+        cur = conn.execute("SELECT COUNT(*) AS n FROM responses")
+        row = cur.fetchone()
+        if row is None:
+            return 0
+        if isinstance(row, dict):
+            return int(row.get("n") or 0)
+        return int(row[0])
 
 
 def _count_budget(rows):
@@ -628,6 +670,8 @@ def stats():
 
     return {
         "total": total,
+        "storage": "postgres" if _use_postgres() else "sqlite",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "interest_yes": interest_yes,
         "interest_maybe": interest_maybe,
         "interest_no": interest_no,
@@ -661,9 +705,8 @@ def stats():
             "portes": _labeled(_count_map(rows, "portes", LABELS["portes"]), "portes"),
             "qui": _labeled(_count_multi(rows, "qui", LABELS["qui"]), "qui"),
         },
-        "leads": leads[:20],
-        "recent": recent[:50],
-        "storage": "postgres" if _use_postgres() else "sqlite",
+        "leads": leads[:40],
+        "recent": recent,
     }
 
 

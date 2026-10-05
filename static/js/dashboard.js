@@ -536,13 +536,18 @@ function fillTable(id, rows) {
 }
 
 async function loadStats() {
-  const response = await fetch("/api/stats");
+  const response = await fetch(`/api/stats?_=${Date.now()}`, { cache: "no-store" });
   if (response.status === 401) {
     window.location.href = "/admin";
     return;
   }
   const data = await response.json();
   document.getElementById("kpiTotal").textContent = data.total;
+  const stamp = document.getElementById("kpiStamp");
+  if (stamp) {
+    const when = data.generated_at ? new Date(data.generated_at) : new Date();
+    stamp.textContent = `${data.total} au total · maj ${when.toLocaleTimeString("fr-FR")} · ${data.storage || "?"}`;
+  }
   document.getElementById("kpiYes").textContent = `${data.pct_yes} %`;
   document.getElementById("kpiWarm").textContent = `${data.pct_warm} %`;
   document.getElementById("kpiPilot").textContent = data.pilot_open;
@@ -582,6 +587,11 @@ document.getElementById("personClose")?.addEventListener("click", closePerson);
 document.getElementById("personBackdrop")?.addEventListener("click", closePerson);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closePerson();
+});
+document.getElementById("btnRefreshDash")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  // Recharge la page pour éviter des graphiques Chart.js en double.
+  window.location.reload();
 });
 
 loadStats();
