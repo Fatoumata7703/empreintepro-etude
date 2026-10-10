@@ -8,6 +8,8 @@ from etude_db import delete_response, export_rows, init_db, purge_auto_tests, sa
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
+# Collecte terminée : le formulaire public n'accepte plus de réponses.
+SURVEY_OPEN = os.environ.get("ETUDE_OPEN", "0").strip().lower() in ("1", "true", "yes", "on")
 
 app = Flask(
     __name__,
@@ -34,26 +36,34 @@ def admin_required(view):
 
 @app.route("/")
 def etude_de_marche():
+    if not SURVEY_OPEN:
+        return render_template("etude_closed.html")
     return render_template("questionnaire.html")
 
 
 @app.route("/ping")
 def etude_ping():
-    return jsonify({"ok": True}), 200
+    return jsonify({"ok": True, "survey_open": SURVEY_OPEN}), 200
 
 
 @app.route("/docs")
 def etude_docs():
-    return render_template("etude_docs.html")
+    return render_template("etude_docs.html", survey_open=SURVEY_OPEN)
 
 
 @app.route("/merci")
 def etude_merci():
-    return render_template("etude_merci.html")
+    return render_template("etude_merci.html", survey_open=SURVEY_OPEN)
 
 
 @app.route("/api/reponses", methods=["POST"])
 def etude_save():
+    if not SURVEY_OPEN:
+        return jsonify({
+            "ok": False,
+            "error": "Le questionnaire est fermé. Merci, la collecte est terminée.",
+            "closed": True,
+        }), 403
     data = request.get_json(silent=True) or {}
     org_type = (data.get("org_type") or "").strip()
     interet = (data.get("interet") or "").strip()

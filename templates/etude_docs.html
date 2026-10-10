@@ -19,7 +19,11 @@
             <img src="{{ url_for('static', filename='img/logo-mark.png') }}" alt="">
             <span>EmpreintePro</span>
           </a>
+          {% if survey_open %}
           <a class="ghost" href="{{ url_for('etude_de_marche') }}">Remplir le questionnaire</a>
+          {% else %}
+          <span class="ghost" style="pointer-events:none;opacity:0.75;">Questionnaire fermé</span>
+          {% endif %}
         </div>
         <div class="docs-hero-grid">
           <div>
@@ -85,7 +89,11 @@
         <p>Les réponses sont regroupées (types d’organisations, freins, intérêt). Si vous laissez un contact et que le sujet vous parle, l’équipe peut revenir pour une démo ou un essai — sans engagement.</p>
 
         <div class="btn-row" style="margin-top:1.6rem;">
+          {% if survey_open %}
           <a class="btn" href="{{ url_for('etude_de_marche') }}">Répondre au questionnaire</a>
+          {% else %}
+          <a class="btn" href="{{ url_for('etude_de_marche') }}">Voir le message de clôture</a>
+          {% endif %}
         </div>
       </div>
     </article>

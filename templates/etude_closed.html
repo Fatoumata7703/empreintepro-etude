@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merci — EmpreintePro</title>
+  <title>Étude terminée — EmpreintePro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -20,14 +20,11 @@
             <span>EmpreintePro</span>
           </div>
         </div>
-        <p class="kicker">Réponse enregistrée{% if request.args.get('n') %} · n° {{ request.args.get('n') }}{% endif %}</p>
-        <h1>Merci.</h1>
-        <p class="lead">Votre avis est bien dans l’étude{% if request.args.get('n') %} (n° {{ request.args.get('n') }}){% endif %}. Si vous avez laissé un contact et que le sujet vous parle, on pourra revenir vers vous.</p>
+        <p class="kicker">Étude de marché</p>
+        <h1>Le questionnaire est fermé.</h1>
+        <p class="lead">Merci à toutes les personnes qui ont répondu. La collecte est terminée : on n’accepte plus de nouvelles réponses.</p>
         <div class="btn-row" style="margin-top:1.4rem;">
-          <a class="ghost" href="{{ url_for('etude_docs') }}">Relire la documentation</a>
-          {% if survey_open %}
-          <a class="btn" href="{{ url_for('etude_de_marche') }}">Nouvelle réponse</a>
-          {% endif %}
+          <a class="ghost" href="{{ url_for('etude_docs') }}">En savoir plus sur EmpreintePro</a>
         </div>
       </header>
     </article>
