@@ -8,8 +8,8 @@ from etude_db import delete_response, export_rows, init_db, purge_auto_tests, sa
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
-# Collecte terminée : le formulaire public n'accepte plus de réponses.
-SURVEY_OPEN = os.environ.get("ETUDE_OPEN", "0").strip().lower() in ("1", "true", "yes", "on")
+# Réouvert pour capture / démo. Fermer : ETUDE_OPEN=0
+SURVEY_OPEN = os.environ.get("ETUDE_OPEN", "1").strip().lower() in ("1", "true", "yes", "on")
 
 app = Flask(
     __name__,
