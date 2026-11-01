@@ -2,9 +2,9 @@ import os
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, Response, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, Response, jsonify, redirect, render_template, request, send_file, session, url_for
 
-from etude_db import delete_response, export_rows, init_db, purge_auto_tests, save_response, stats
+from etude_db import BACKUP_XLSX, delete_response, export_rows, init_db, purge_auto_tests, save_response, stats
 
 BASE = Path(__file__).resolve().parent
 ADMIN_PASSWORD = os.environ.get("ETUDE_ADMIN", "empreinte2026")
@@ -135,27 +135,14 @@ def etude_stats():
 @app.route("/api/export")
 @admin_required
 def etude_export():
-    import csv
-    import io
-
-    rows = export_rows()
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    headers = [
-        "id", "created_at", "role", "org_type", "taille", "zone", "moyens", "portes",
-        "douleurs", "incident", "priorite", "qui", "interet", "freins", "pilote",
-        "nom", "tel", "fin", "concurrents", "decideur", "budget", "urgence",
-        "ailleurs", "abonnement",
-    ]
-    writer.writerow(headers)
-    for row in rows:
-        writer.writerow([row[key] if key in row.keys() else "" for key in headers])
-    data = "\ufeff" + buf.getvalue()
-    return Response(
-        data,
-        mimetype="text/csv; charset=utf-8",
-        headers={"Content-Disposition": "attachment; filename=etude-empreintepro.csv"},
-    )
+    if BACKUP_XLSX.exists():
+        return send_file(
+            BACKUP_XLSX,
+            as_attachment=True,
+            download_name="etude-empreintepro.xlsx",
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    return jsonify({"ok": False, "error": "Fichier Excel introuvable."}), 404
 
 
 @app.route("/api/purge-tests", methods=["POST"])

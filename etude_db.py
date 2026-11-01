@@ -7,6 +7,7 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ETUDE_DB", str(Path(__file__).resolve().parent / "instance" / "etude.db")))
 DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
+BACKUP_XLSX = Path(__file__).resolve().parent / "data" / "etude-backup.xlsx"
 BACKUP_CSV = Path(__file__).resolve().parent / "data" / "etude-backup.csv"
 
 LABELS = {
@@ -658,11 +659,40 @@ def _funnel(total, interest_maybe, with_contact, pilot_open):
     }
 
 
-def _backup_rows():
-    import csv
+def _rows_from_xlsx():
+    from openpyxl import load_workbook
 
+    wb = load_workbook(BACKUP_XLSX, read_only=True, data_only=True)
+    sheet = wb["Données brutes"] if "Données brutes" in wb.sheetnames else wb[wb.sheetnames[-1]]
+    rows_iter = sheet.iter_rows(values_only=True)
+    headers = [str(h or "").strip() for h in next(rows_iter)]
+    out = []
+    for values in rows_iter:
+        if not values or all(v is None or v == "" for v in values):
+            continue
+        item = {}
+        for key, value in zip(headers, values):
+            if not key:
+                continue
+            if value is None:
+                item[key] = ""
+            else:
+                item[key] = str(value)
+        out.append(item)
+    wb.close()
+    return out
+
+
+def _backup_rows():
+    if BACKUP_XLSX.exists():
+        try:
+            return _rows_from_xlsx()
+        except Exception as exc:
+            print("etude_db xlsx backup:", exc)
     if not BACKUP_CSV.exists():
         return []
+    import csv
+
     with BACKUP_CSV.open(encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
 
@@ -681,7 +711,7 @@ def _load_stat_rows():
         return rows, storage
     backup = _backup_rows()
     if backup:
-        return backup, "backup-csv"
+        return backup, "backup-xlsx" if BACKUP_XLSX.exists() else "backup-csv"
     return [], storage
 
 
@@ -749,7 +779,7 @@ def stats():
         return _stats_payload(rows, storage)
     except Exception as exc:
         print("etude_db stats:", exc)
-        return _stats_payload(_backup_rows(), "backup-csv")
+        return _stats_payload(_backup_rows(), "backup-xlsx" if BACKUP_XLSX.exists() else "backup-csv")
 
 
 def export_rows():
