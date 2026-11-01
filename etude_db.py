@@ -241,6 +241,13 @@ def _ensure_columns(conn):
 
 
 def init_db():
+    try:
+        _init_db_inner()
+    except Exception as exc:
+        print("init_db ignore:", exc)
+
+
+def _init_db_inner():
     with connect() as conn:
         if _use_postgres():
             conn.execute(

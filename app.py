@@ -19,7 +19,10 @@ app = Flask(
 )
 app.secret_key = os.environ.get("ETUDE_SECRET", "empreintepro-etude-locale")
 
-init_db()
+try:
+    init_db()
+except Exception as exc:
+    print("init_db:", exc)
 
 
 def admin_required(view):
