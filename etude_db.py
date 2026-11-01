@@ -7,6 +7,7 @@ from pathlib import Path
 
 DB_PATH = Path(os.environ.get("ETUDE_DB", str(Path(__file__).resolve().parent / "instance" / "etude.db")))
 DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
+BACKUP_CSV = Path(__file__).resolve().parent / "data" / "etude-backup.csv"
 
 LABELS = {
     "role": {
@@ -650,12 +651,34 @@ def _funnel(total, interest_maybe, with_contact, pilot_open):
     }
 
 
-def stats():
-    with connect() as conn:
-        _ensure_columns(conn)
-        cur = conn.execute("SELECT * FROM responses ORDER BY id DESC")
-        rows = cur.fetchall()
+def _backup_rows():
+    import csv
 
+    if not BACKUP_CSV.exists():
+        return []
+    with BACKUP_CSV.open(encoding="utf-8-sig", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def _load_stat_rows():
+    storage = "postgres" if _use_postgres() else "sqlite"
+    rows = []
+    try:
+        with connect() as conn:
+            _ensure_columns(conn)
+            rows = conn.execute("SELECT * FROM responses ORDER BY id DESC").fetchall()
+    except Exception as exc:
+        print("etude_db stats DB:", exc)
+        rows = []
+    if rows:
+        return rows, storage
+    backup = _backup_rows()
+    if backup:
+        return backup, "backup-csv"
+    return [], storage
+
+
+def _stats_payload(rows, storage):
     total = len(rows)
     interest_yes = sum(1 for r in rows if _row_get(r, "interet") == "oui")
     interest_maybe = sum(1 for r in rows if _row_get(r, "interet") in ("oui", "peut"))
@@ -673,7 +696,7 @@ def stats():
 
     return {
         "total": total,
-        "storage": "postgres" if _use_postgres() else "sqlite",
+        "storage": storage,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "interest_yes": interest_yes,
         "interest_maybe": interest_maybe,
@@ -711,6 +734,15 @@ def stats():
         "leads": leads[:40],
         "recent": recent,
     }
+
+
+def stats():
+    try:
+        rows, storage = _load_stat_rows()
+        return _stats_payload(rows, storage)
+    except Exception as exc:
+        print("etude_db stats:", exc)
+        return _stats_payload(_backup_rows(), "backup-csv")
 
 
 def export_rows():

@@ -541,6 +541,11 @@ async function loadStats() {
     window.location.href = "/admin";
     return;
   }
+  if (!response.ok) {
+    const stamp = document.getElementById("kpiStamp");
+    if (stamp) stamp.textContent = `Chargement impossible (${response.status})`;
+    return;
+  }
   const data = await response.json();
   document.getElementById("kpiTotal").textContent = data.total;
   const stamp = document.getElementById("kpiStamp");

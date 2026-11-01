@@ -122,7 +122,11 @@ def etude_rapport():
 @app.route("/api/stats")
 @admin_required
 def etude_stats():
-    return jsonify(stats())
+    try:
+        return jsonify(stats())
+    except Exception as exc:
+        app.logger.exception("stats")
+        return jsonify({"ok": False, "error": str(exc)[:300], "total": 0}), 500
 
 
 @app.route("/api/export")
